@@ -16,8 +16,28 @@ index c86241d..384a667 100644
  
  <%- css_ex(theme.static_prefix.internal_css, 'main.css') %>
  
+diff --git a/node_modules/hexo-theme-fluid/layout/_partials/header/navigation.ejs b/node_modules/hexo-theme-fluid/layout/_partials/header/navigation.ejs
+index eae9f58..e2230db 100644
+--- a/node_modules/hexo-theme-fluid/layout/_partials/header/navigation.ejs
++++ b/node_modules/hexo-theme-fluid/layout/_partials/header/navigation.ejs
+@@ -64,6 +64,15 @@
+             </a>
+           </li>
+         <% } %>
++        <% var navCurrentUrl = url_for(page.path) %>
++        <% var navIsEn = navCurrentUrl === '/en/' || navCurrentUrl.indexOf('/en/') === 0 %>
++        <% var navLangUrl = navIsEn ? (navCurrentUrl.replace(/^\/en/, '') || '/') : ('/en' + navCurrentUrl) %>
++        <% var navLangTitle = navIsEn ? '中文' : 'English' %>
++        <li class="nav-item" id="lang-switch-btn">
++          <a class="nav-link" target="_self" href="<%= navLangUrl %>" aria-label="Language Switch" title="<%= navLangTitle %>">
++            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
++          </a>
++        </li>
+       </ul>
+     </div>
+   </div>
 diff --git a/node_modules/hexo-theme-fluid/layout/index.ejs b/node_modules/hexo-theme-fluid/layout/index.ejs
-index a370e9c..4f49ad0 100644
+index a370e9c..9de4426 100644
 --- a/node_modules/hexo-theme-fluid/layout/index.ejs
 +++ b/node_modules/hexo-theme-fluid/layout/index.ejs
 @@ -8,7 +8,7 @@ page.banner_mask_alpha = theme.index.banner_mask_alpha
@@ -25,7 +45,7 @@ index a370e9c..4f49ad0 100644
  
  <h1 style="display: none"><%= config.title %></h1>
 -<% page.posts.each(function (post) { %>
-+<% page.posts.filter(function (p) { return p.layout === 'post' }).each(function (post) { %>
++<% page.posts.filter(function (p) { return p.layout === 'post' && ((page.path && page.path.indexOf('/en/') === 0) ? (p.lang === 'en') : (p.lang !== 'en')) }).each(function (post) { %>
    <div class="row mx-auto index-card">
      <% var post_url = url_for(post.path), index_img = post.index_img || theme.post.default_index_img %>
      <% if (index_img) { %>
