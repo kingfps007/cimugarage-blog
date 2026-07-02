@@ -4,7 +4,7 @@
 
 | 字段 | 值 |
 |------|-----|
-| **构建命令** | `npm ci && git submodule update --init --recursive && npm run build` |
+| **构建命令** | `npm ci && npm run build && cp _redirects public/_redirects` |
 | **输出目录** | `public` |
 | **Node 版本** | 20 |
 
@@ -41,8 +41,10 @@ ESA Pages 容器是**临时**的，跨步骤状态不保留（除非用缓存）
 方案 1 更简单。更新后的完整 build 命令：
 
 ```bash
-npm ci && git submodule update --init --recursive && npm run build && cp _redirects public/_redirects
+npm ci && npm run build && cp _redirects public/_redirects
 ```
+
+> **v0.5.1 变更**：cimu-kb submodule 已移除（cimugarage-blog 改用独立 cimugarage-blog 主题），删掉 git submodule update 步骤。
 
 ## _redirects 当前内容
 

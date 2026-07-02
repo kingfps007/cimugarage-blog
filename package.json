@@ -14,6 +14,7 @@
     "lint": "eslint tools/ themes/cimugarage-blog/source/js",
     "check:bilingual": "bash tools/check-bilingual.sh",
     "check:links": "bash tools/check-links.sh",
+    "check:pre-push": "bash tools/pre-push-check.sh",
     "verify:migration": "bash tools/verify-migration.sh"
   },
   "engines": {

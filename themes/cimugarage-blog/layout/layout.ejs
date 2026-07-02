@@ -30,25 +30,25 @@
   </script>
 
   <!-- hreflang 双语 -->
-  <% if (page.path && page.layout !== 'index') {
-       var cleanPath = page.path.replace(/^\/+/, '').replace(/\/+$/, '');
-       // 去掉语言前缀 en/
-       if (cleanPath === 'en') {
-         cleanPath = '';
-       } else if (cleanPath.indexOf('en/') === 0) {
-         cleanPath = cleanPath.substring(3);
-       }
-       var isEn = page.lang === 'en';
-       var enPath = cleanPath ? 'en/' + cleanPath : 'en';
-       var zhPath = cleanPath;
-       // 是否是文件型 URL（带 .html/.xml 等扩展名）→ 不加尾 /
-       var isFileURL = cleanPath && /\.[a-z]+$/i.test(cleanPath);
-       var zhSuffix = isFileURL ? '' : (zhPath ? '/' : '');
-       var enSuffix = isFileURL ? '' : '/';
+  <%
+    // 清理 page.path：去前导 /、去语言前缀（en/）、去尾 /
+    var cleanPath = (page.path || '').replace(/^\/+/, '').replace(/\/+$/, '');
+    if (cleanPath === 'en') {
+      cleanPath = '';
+    } else if (cleanPath.indexOf('en/') === 0) {
+      cleanPath = cleanPath.substring(3);
+    }
+    // 文件型 URL（.html）不加尾 /
+    var isFileURL = cleanPath && /\.[a-z]+$/i.test(cleanPath);
+    var enSuffix = isFileURL ? '' : '/';
+    var zhSuffix = isFileURL ? '' : (cleanPath ? '/' : '');
+    var enPath = cleanPath ? 'en/' + cleanPath : 'en';
+    var zhPath = cleanPath;
   %>
-    <link rel="alternate" hreflang="zh-CN" href="<%= siteUrl %>/<%= zhPath %><%= zhSuffix %>">
-    <link rel="alternate" hreflang="en" href="<%= siteUrl %>/<%= enPath %><%= enSuffix %>">
-    <link rel="alternate" hreflang="x-default" href="<%= siteUrl %>/<%= zhPath %><%= zhSuffix %>">
+  <link rel="alternate" hreflang="zh-CN" href="<%= siteUrl %>/<%= zhPath %><%= zhSuffix %>">
+  <link rel="alternate" hreflang="en" href="<%= siteUrl %>/<%= enPath %><%= enSuffix %>">
+  <link rel="alternate" hreflang="x-default" href="<%= siteUrl %>/<%= zhPath %><%= zhSuffix %>">
+  <% if (page.layout !== 'index') { %>
     <link rel="canonical" href="<%= pageURL %>">
   <% } %>
 
