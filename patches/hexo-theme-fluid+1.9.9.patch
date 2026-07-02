@@ -16,3 +16,29 @@ index c86241d..384a667 100644
  
  <%- css_ex(theme.static_prefix.internal_css, 'main.css') %>
  
+diff --git a/node_modules/hexo-theme-fluid/layout/index.ejs b/node_modules/hexo-theme-fluid/layout/index.ejs
+index a370e9c..4f49ad0 100644
+--- a/node_modules/hexo-theme-fluid/layout/index.ejs
++++ b/node_modules/hexo-theme-fluid/layout/index.ejs
+@@ -8,7 +8,7 @@ page.banner_mask_alpha = theme.index.banner_mask_alpha
+ %>
+ 
+ <h1 style="display: none"><%= config.title %></h1>
+-<% page.posts.each(function (post) { %>
++<% page.posts.filter(function (p) { return p.layout === 'post' }).each(function (post) { %>
+   <div class="row mx-auto index-card">
+     <% var post_url = url_for(post.path), index_img = post.index_img || theme.post.default_index_img %>
+     <% if (index_img) { %>
+diff --git a/node_modules/hexo-theme-fluid/scripts/generators/index-generator.js b/node_modules/hexo-theme-fluid/scripts/generators/index-generator.js
+index d90c132..6ce0ae1 100644
+--- a/node_modules/hexo-theme-fluid/scripts/generators/index-generator.js
++++ b/node_modules/hexo-theme-fluid/scripts/generators/index-generator.js
+@@ -4,7 +4,7 @@ const pagination = require('hexo-pagination');
+ 
+ module.exports = function(locals) {
+   const config = this.config;
+-  const posts = locals.index_posts.sort(config.index_generator.order_by);
++  const posts = locals.index_posts.filter(p => p.layout === 'post').sort(config.index_generator.order_by);
+ 
+   posts.data.sort((a, b) => (b.sticky || 0) - (a.sticky || 0));
+ 
