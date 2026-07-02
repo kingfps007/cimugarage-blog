@@ -28,6 +28,10 @@ REQUIRED=(
   "public/en/archives/index.html"
   "public/security-of-blog/index.html"
   "public/en/security-of-blog/index.html"
+  "public/linuxru-men/index.html"
+  "public/wai-she-equipments/index.html"
+  "public/en/wai-she-equipments/index.html"
+  "public/chai-chu-raid-he-lvm/index.html"
 )
 MISSING=0
 for f in "${REQUIRED[@]}"; do
