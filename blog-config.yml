@@ -1,0 +1,85 @@
+# ============================================================
+# 博客运行时配置
+# 位置：source/_data/blog-config.yml
+# 作用：所有运行时配置集中管理，避免硬编码
+# ============================================================
+
+# ====== 人生倒计时（仅 about 页显示） ======
+birth:
+  date: '1990-01-01'  # ← 修改此处；show: false 即可彻底关闭
+  show: true
+
+# ====== 暗色模式（user_profile 偏好） ======
+dark_mode:
+  enabled: true
+  default: light  # 不跟随系统
+  persistence: localStorage  # 切换后记住用户选择
+
+# ====== 浏览数（自建 ESA 函数） ======
+view_counter:
+  enabled: true
+  endpoint: /api/view
+  count_endpoint: /api/view/count
+  hit_threshold: 1  # 1 次访问 = +1
+  show_after_seconds: 0  # 立即显示
+
+# ====== 评论 ======
+comment:
+  enabled: true
+  list_endpoint: /api/comments
+  submit_endpoint: /api/comment
+  delete_endpoint: /api/comment
+  admin_endpoint: /api/admin/comments
+  approve_endpoint: /api/comment/approve
+  per_page: 20
+  max_length: 2000
+  min_length: 2
+
+# ====== 排行（自建 ESA 函数） ======
+top_posts:
+  enabled: true
+  endpoint: /api/top-posts
+  limit: 20
+  cache_seconds: 300  # 5 分钟
+
+# ====== 搜索 ======
+search:
+  enabled: true
+  endpoint: /search/
+  fuse:
+    threshold: 0.3
+    keys:
+      - title
+      - tags
+      - description
+      - content
+
+# ====== SEO ======
+seo:
+  og_image_default: /assets/images/common/cover-placeholder.webp
+  twitter_handle: ''
+  wechat_app_id: ''
+
+# ====== 文章页配置 ======
+post:
+  last_updated_warning: 90  # 90 天
+  cover_placeholder: /assets/images/common/cover-placeholder.webp
+  show_view_count: true
+  show_updated_date: true
+
+# ====== 备案号（必填！） ======
+icp:
+  number: '晋ICP备2026000871号-1'  # ICP 备案号
+  police: '晋公网安备14010902001829号'  # 公安备案号
+
+# ====== 联系 ======
+contact:
+  email: 2479010668@qq.com
+  qq: 2479010668
+  show_email: true
+  show_qq: true
+
+# ====== 站点 ======
+site:
+  beian_url: 'https://beian.miit.gov.cn/'  # 工信部备案查询
+  since: 2018

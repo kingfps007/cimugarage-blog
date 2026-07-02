@@ -1,0 +1,26 @@
+# ============================================================
+# ESA Pages 静态重定向
+# 文件位置：cimugarage-blog/public/_redirects
+# 部署后由 ESA Pages 自动识别
+# ============================================================
+
+# ----- Halo 旧 URL → 新站（按需维护） -----
+# Halo 旧文章格式：/archives/<slug>/
+# 新站格式：/<slug>/（中文）/en/<slug>/（英文）
+
+/archives/security-of-blog/      /security-of-blog/      301
+/archives/blog-security/         /security-of-blog/      301
+/archives/linuxru-men/           /linux-intro/           301
+/archives/linux-intro/           /linux-intro/           301
+/archives/wai-she-equipments/    /peripherals/           301
+/archives/about/                 /about/                 301
+/archives                       /archives/              301
+/archives/                      /archives/              301
+
+# ----- 通用兜底 -----
+/feed/                           /rss2.xml               301
+/feed.xml                        /rss2.xml               301
+/atom.xml                        /rss2.xml               301
+
+# ----- 管理员入口（保留可访问，不对外暴露链接） -----
+/admin/comments                 /admin/comments.html    200

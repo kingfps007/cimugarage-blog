@@ -1,0 +1,54 @@
+# ============================================================
+# cimugarage-blog · .gitignore
+# ============================================================
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn.lock
+package-lock.json.bak
+
+# Hexo
+public/
+.deploy*/
+.deploy_git/
+db.json
+*.log
+.dbshell
+.meteor*
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 临时 / 草稿（不入库）
+*.tmp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+
+# 备份（KV 导出）
+backups/
+archives/halo-export-*.json
+
+# 构建产物
+themes/cimu-kb/_config.yml.bak
+
+# 编辑器
+.vscode/
+.idea/
+*.code-workspace
+
+# 凭据
+.env
+.env.local
+config.local.yml
+
+# OS
+.DS_Store
+desktop.ini
