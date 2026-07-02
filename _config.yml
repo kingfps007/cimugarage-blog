@@ -14,12 +14,11 @@ author: 此木的车间
 email: 2479010668@qq.com
 url: https://cimugarage.cn
 root: /
-language:
-  - zh-CN
-  - en
-language_dir:
-  zh-CN: .
-  en: en/
+# hexo 7 没有真正的原生多语言框架（只有 UI 字符串翻译 __()）
+# 中英两版用 front matter 的 path 字段强制路由：
+#   - 中文 source/about/index.md          → 渲染到 /about/
+#   - 英文 source/about/en.md (path: en/about) → 渲染到 /en/about/
+language: zh-CN
 timezone: Asia/Shanghai
 
 # ====== 备案号（D5 合规底线，P0 第一步必填） ======
@@ -33,7 +32,6 @@ tag_dir: tags
 archive_dir: archives
 category_dir: categories
 code_dir: downloads/code
-i18n_dir: :lang
 skip_render:
 
 # ====== 文章（Hexo 7 原生 i18n） ======
@@ -63,8 +61,10 @@ prismjs:
   enable: false
 
 # ====== 首页 ======
+# hexo 7 默认 index_generator 会输出到 /，与 _posts/index.md 冲突
+# 显式 path: 'off' 禁用，由 _posts/index.md 提供 /
 index_generator:
-  path: ''
+  path: 'off'
   per_page: 10
   order_by: -date
 
@@ -80,8 +80,9 @@ archive_generator:
   yearly: true
   monthly: true
 
-# ====== 永久链接（关键：i18n 时路径正确） ======
-permalink: :lang/:title/
+# ====== 永久链接 ======
+# 文章：/<slug>/（不带 lang 前缀，由 front matter path 强制双语）
+permalink: :title/
 permalink_defaults:
   pretty_urls:
     trailing_index: true
@@ -92,10 +93,6 @@ theme: cimu-kb
 # ====== 部署（ESA Pages） ======
 deploy:
   type: ''  # 静态站，无需 hexo-deployer
-
-# ====== 国际化配置（i18n） ======
-i18n:
-  type: page  # page: 按 URL 前缀；default: 按文件后缀
 
 # ====== 主题 _config.yml 注入（cimu-kb） ======
 theme_config:

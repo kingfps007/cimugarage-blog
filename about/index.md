@@ -3,6 +3,7 @@ title: 关于
 date: 2026-07-02 14:55:00
 updated: 2026-07-02 14:55:00
 lang: zh-CN
+path: about
 type: about
 comments: false
 ---

@@ -3,6 +3,7 @@ title: Privacy Policy
 date: 2026-07-02 14:55:00
 updated: 2026-07-02 14:55:00
 lang: en
+path: en/about/privacy
 type: privacy
 comments: false
 description: cimugarage.cn blog privacy policy

@@ -3,6 +3,7 @@ title: 隐私政策
 date: 2026-07-02 14:55:00
 updated: 2026-07-02 14:55:00
 lang: zh-CN
+path: about/privacy
 type: privacy
 comments: false
 description: cimugarage.cn 博客站隐私政策

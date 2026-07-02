@@ -3,6 +3,7 @@ title: About
 date: 2026-07-02 14:55:00
 updated: 2026-07-02 14:55:00
 lang: en
+path: en/about
 type: about
 comments: false
 ---
