@@ -9,10 +9,10 @@ set -e
 cd "$(dirname "$0")/.."
 
 echo "==> 1/4 hexo clean"
-npx hexo clean > /dev/null
+npx hexo clean
 
 echo "==> 2/4 hexo generate"
-npx hexo generate > /dev/null
+npx hexo generate
 
 echo "==> 3/4 关键页面存在性检查"
 REQUIRED=(
@@ -26,6 +26,8 @@ REQUIRED=(
   "public/en/about/privacy/index.html"
   "public/en/404.html"
   "public/en/archives/index.html"
+  "public/security-of-blog/index.html"
+  "public/en/security-of-blog/index.html"
 )
 MISSING=0
 for f in "${REQUIRED[@]}"; do
