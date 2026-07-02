@@ -87,8 +87,8 @@ permalink_defaults:
   pretty_urls:
     trailing_index: true
 
-# ====== 主题（hexo-theme-fluid，杂志卡片风格，内置评论/搜索/暗色） ======
-theme: fluid
+# ====== 主题（cimu-kb 通用主题，blog 模式：报纸感首页 + 知识库风格文章页） ======
+theme: cimu-kb
 
 # ====== 部署（ESA Pages） ======
 deploy:

@@ -1,0 +1,23 @@
+# cimu-kb 主题子配置（覆盖 cimu-kb 默认值）
+# 文件被 hexo 自动合并到 themes/cimu-kb/_config.yml
+
+# 切到 blog 模式（覆盖默认 kb）
+site_type: blog
+
+# blog 模式专属配置
+blog:
+  sidebar:
+    show_categories: true
+    show_tags: true
+    show_recent: true
+    recent_count: 5
+    tag_cloud_count: 20
+  home:
+    headline_count: 1
+    excerpt_length: 120
+    show_dates: true
+    show_tags: true
+  post:
+    show_toc: true
+    show_article_nav: true
+    article_list_mode: 'date'  # 'date' | 'category'

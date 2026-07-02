@@ -39,6 +39,10 @@ archives/halo-export-*.json
 # 构建产物
 themes/cimu-kb/_config.yml.bak
 
+# 临时 commit message 文件
+*.commit-msg.txt
+.commit-msg.txt
+
 # 编辑器
 .vscode/
 .idea/

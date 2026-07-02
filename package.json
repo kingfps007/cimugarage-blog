@@ -10,13 +10,9 @@
     "build": "hexo generate",
     "clean": "hexo clean",
     "server": "hexo server",
-    "postinstall": "patch-package",
     "deploy": "echo 'ESA Pages 自动部署，推 git 即可' && exit 0",
     "lint": "eslint tools/",
-    "check:bilingual": "bash tools/check-bilingual.sh",
-    "check:links": "bash tools/check-links.sh",
-    "check:pre-push": "bash tools/pre-push-check.sh",
-    "verify:migration": "bash tools/verify-migration.sh"
+    "check:pre-push": "bash tools/pre-push-check.sh"
   },
   "engines": {
     "node": ">=20.0.0 <21.0.0",
@@ -39,12 +35,10 @@
     "hexo-generator-tag": "^2.0.0",
     "hexo-renderer-ejs": "^2.0.0",
     "hexo-renderer-marked": "^6.3.0",
-    "hexo-renderer-stylus": "^3.0.1",
-    "hexo-theme-fluid": "^1.9.9"
+    "hexo-renderer-stylus": "^3.0.1"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
-    "patch-package": "^8.0.1",
     "prettier": "^3.3.0"
   }
 }

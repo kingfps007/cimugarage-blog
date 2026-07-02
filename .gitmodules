@@ -1,0 +1,3 @@
+[submodule "themes/cimu-kb"]
+	path = themes/cimu-kb
+	url = https://github.com/kingfps007/cimu-kb.git
