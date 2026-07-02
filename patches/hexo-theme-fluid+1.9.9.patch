@@ -16,11 +16,23 @@ index c86241d..384a667 100644
  
  <%- css_ex(theme.static_prefix.internal_css, 'main.css') %>
  
+diff --git a/node_modules/hexo-theme-fluid/layout/_partials/head.ejs b/node_modules/hexo-theme-fluid/layout/_partials/head.ejs
+index 648e064..4f3b138 100644
+--- a/node_modules/hexo-theme-fluid/layout/_partials/head.ejs
++++ b/node_modules/hexo-theme-fluid/layout/_partials/head.ejs
+@@ -45,6 +45,7 @@ var ogConfig = Object.assign({ image: ogImage && url_for(ogImage) }, theme.open_
+   <title><%= title %></title>
+ 
+   <%- partial('_partials/css.ejs') %>
++  <link rel="stylesheet" href="<%= url_for('/css/broadsheet.css') %>">
+   <%- export_config() %>
+   <%- js_ex(theme.static_prefix.internal_js, 'utils.js') %>
+   <%- js_ex(theme.static_prefix.internal_js, 'color-schema.js') %>
 diff --git a/node_modules/hexo-theme-fluid/layout/_partials/header/navigation.ejs b/node_modules/hexo-theme-fluid/layout/_partials/header/navigation.ejs
-index eae9f58..e2230db 100644
+index eae9f58..4f3df03 100644
 --- a/node_modules/hexo-theme-fluid/layout/_partials/header/navigation.ejs
 +++ b/node_modules/hexo-theme-fluid/layout/_partials/header/navigation.ejs
-@@ -64,6 +64,15 @@
+@@ -64,11 +64,29 @@
              </a>
            </li>
          <% } %>
@@ -36,6 +48,20 @@ index eae9f58..e2230db 100644
        </ul>
      </div>
    </div>
+ </nav>
+ 
++<!-- Broadsheet 报头日期条 -->
++<div class="bs-masthead-meta">
++  <span class="bs-vol">Vol. <%= new Date().getFullYear() - 2025 %></span>
++  &nbsp;·&nbsp;
++  <span class="bs-date"><%= new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
++  &nbsp;·&nbsp;
++  <span class="bs-tagline"><%= config.subtitle || '一个中文 + 英文双语的个人博客' %></span>
++</div>
++
+ <!-- Mobile grid menu overlay -->
+ <div id="mobile-grid-menu" class="d-lg-none">
+   <div class="mobile-grid-menu-inner">
 diff --git a/node_modules/hexo-theme-fluid/layout/index.ejs b/node_modules/hexo-theme-fluid/layout/index.ejs
 index a370e9c..9de4426 100644
 --- a/node_modules/hexo-theme-fluid/layout/index.ejs

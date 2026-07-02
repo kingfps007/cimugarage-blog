@@ -1,0 +1,359 @@
+/* =========================================================================
+ * cimugarage.cn · Broadsheet 报纸感主题
+ * 套在 Fluid 1.9.9 之上，CSS Grid 多列排版，栏间竖线分隔
+ * ========================================================================= */
+
+:root {
+  --bs-paper: #f4ecd8;
+  --bs-paper-dark: #1a1a1a;
+  --bs-ink: #1a1a1a;
+  --bs-ink-soft: #4a4a4a;
+  --bs-rule: #1a1a1a;
+  --bs-accent: #8b1a1a;
+  --bs-font-serif: Georgia, "Times New Roman", "Songti SC", "STSong", "Noto Serif CJK SC", serif;
+  --bs-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+[data-user-color-scheme='dark'] {
+  --bs-paper: #1a1a1a;
+  --bs-ink: #f4ecd8;
+  --bs-ink-soft: #c4b89a;
+  --bs-rule: #c4b89a;
+  --bs-accent: #c45a5a;
+}
+
+/* --- 整体背景：米色 --- */
+html, body, #board, .wrapper, .markdown-body {
+  background: var(--bs-paper);
+  color: var(--bs-ink);
+}
+
+body, .markdown-body, .markdown-body p, .markdown-body li {
+  font-family: var(--bs-font-serif);
+}
+
+/* --- 标题：衬线 + 黑色 + 大字号 --- */
+h1, h2, h3, h4, h5, h6,
+.post-title, .index-header a, .post-content h2, .post-content h3 {
+  font-family: var(--bs-font-serif);
+  font-weight: 700;
+  color: var(--bs-ink);
+}
+
+/* --- 报头：navbar 报纸版式 --- */
+#navbar {
+  background: var(--bs-paper) !important;
+  border-bottom: 3px double var(--bs-rule);
+  box-shadow: none;
+  padding: 16px 0 8px;
+}
+
+#navbar .navbar-brand {
+  text-align: center;
+  width: 100%;
+  margin: 0;
+}
+
+#navbar .navbar-brand strong {
+  font-family: var(--bs-font-serif);
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--bs-ink);
+  display: block;
+  line-height: 1;
+}
+
+#navbar .navbar-brand .navbar-subtitle {
+  display: block;
+  font-family: var(--bs-font-sans);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bs-ink-soft);
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+#navbar .nav-link {
+  color: var(--bs-ink) !important;
+  font-family: var(--bs-font-sans);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  padding: 8px 14px;
+}
+
+#navbar .nav-link:hover {
+  color: var(--bs-accent) !important;
+}
+
+#color-toggle-icon, #lang-switch-btn svg {
+  color: var(--bs-ink) !important;
+}
+
+/* --- 报头下方期号条 --- */
+.bs-masthead-meta {
+  display: block;
+  text-align: center;
+  font-family: var(--bs-font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--bs-ink-soft);
+  border-top: 1px solid var(--bs-rule);
+  border-bottom: 1px solid var(--bs-rule);
+  padding: 6px 16px;
+  margin: 0 0 32px 0;
+  background: var(--bs-paper);
+}
+
+.bs-masthead-meta .bs-vol { color: var(--bs-accent); font-weight: 700; }
+
+/* --- ★ 核心：首页文章列表用 CSS Grid 多列报纸排版 --- */
+#board .row {
+  display: grid !important;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin: 0;
+}
+
+/* 桌面端双栏 */
+@media (min-width: 768px) {
+  #board .row { grid-template-columns: 1fr 1fr; }
+}
+
+/* 大屏三栏 */
+@media (min-width: 1200px) {
+  #board .row { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* 报纸卡片：上下横线 + 栏间竖线 */
+#board .row .index-card {
+  width: auto !important;
+  background: var(--bs-paper);
+  border: none;
+  border-top: 1px solid var(--bs-rule);
+  border-bottom: 1px solid var(--bs-rule);
+  padding: 24px 20px;
+  margin: 0 !important;
+}
+
+/* 多列布局：右竖线分隔（最后一列无） */
+@media (min-width: 768px) {
+  #board .row .index-card:not(:nth-child(2n)) { border-right: 1px solid var(--bs-rule); }
+}
+@media (min-width: 1200px) {
+  #board .row .index-card:not(:nth-child(3n)) { border-right: 1px solid var(--bs-rule); }
+}
+
+/* 卡片标题：大字号 + hover 红色下划线 */
+.index-header {
+  margin-bottom: 12px;
+}
+
+.index-header a {
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  color: var(--bs-ink) !important;
+  border-bottom: 2px solid transparent;
+  display: inline;
+}
+
+.index-header a:hover {
+  border-bottom-color: var(--bs-accent);
+}
+
+/* 摘要：斜体灰 */
+.index-excerpt {
+  color: var(--bs-ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  font-style: italic;
+  margin: 8px 0 12px 0;
+}
+
+/* 缩略图：去圆角 + 黑边 */
+.index-img img {
+  border: 1px solid var(--bs-rule);
+  border-radius: 0;
+  width: 100%;
+  height: auto;
+}
+
+/* 元信息：日期 + 分类，报纸小字 */
+.post-metas {
+  font-family: var(--bs-font-sans);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--bs-ink-soft);
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px dotted var(--bs-rule);
+}
+
+.post-metas a, .post-metas i { color: var(--bs-ink-soft) !important; }
+.post-metas a:hover { color: var(--bs-accent) !important; }
+
+/* 分类色条：每篇文章顶部加一条彩色短线 */
+.index-card::before {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: var(--bs-accent);
+  margin-bottom: 12px;
+}
+
+/* --- 文章详情页：报版正文 --- */
+.post-content, .markdown-body {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: var(--bs-ink);
+}
+
+.post-content h2 {
+  font-size: 1.6rem;
+  border-bottom: 2px solid var(--bs-rule);
+  padding-bottom: 6px;
+  margin-top: 2em;
+  font-weight: 900;
+}
+
+.post-content h3 {
+  font-size: 1.2rem;
+  font-style: italic;
+  margin-top: 1.5em;
+  font-weight: 700;
+}
+
+.post-content h4 {
+  font-size: 1.05rem;
+  margin-top: 1.2em;
+  font-weight: 700;
+}
+
+.post-content blockquote {
+  border-left: 4px solid var(--bs-accent);
+  background: transparent;
+  padding: 8px 16px;
+  font-style: italic;
+  color: var(--bs-ink-soft);
+  margin: 1em 0;
+}
+
+.post-content code {
+  font-family: "SFMono-Regular", Consolas, "Courier New", monospace;
+  font-size: 0.88em;
+  background: rgba(0, 0, 0, 0.07);
+  color: var(--bs-accent);
+  padding: 1px 5px;
+  border-radius: 0;
+}
+
+[data-user-color-scheme='dark'] .post-content code {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e8c5c5;
+}
+
+.post-content pre {
+  background: #1a1a1a;
+  color: #e0e0e0;
+  border: 1px solid var(--bs-rule);
+  border-radius: 0;
+  padding: 14px 16px;
+  font-size: 0.88em;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+
+[data-user-color-scheme='dark'] .post-content pre {
+  background: #0a0a0a;
+  border-color: var(--bs-rule);
+}
+
+/* 文章元信息：顶部 */
+.post-header {
+  border-bottom: 1px solid var(--bs-rule);
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+.post-title {
+  font-size: 2.2rem;
+  line-height: 1.2;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+/* 表格：报版条纹 */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: var(--bs-font-sans);
+  font-size: 0.92rem;
+  margin: 1em 0;
+}
+
+table th {
+  background: var(--bs-ink);
+  color: var(--bs-paper);
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.82rem;
+  border: 1px solid var(--bs-rule);
+}
+
+table td {
+  border: 1px solid var(--bs-rule);
+  padding: 8px 12px;
+}
+
+table tr:nth-child(even) td { background: rgba(0, 0, 0, 0.04); }
+[data-user-color-scheme='dark'] table tr:nth-child(even) td { background: rgba(255, 255, 255, 0.04); }
+
+/* 备案号 footer */
+#footer, .footer {
+  background: var(--bs-paper) !important;
+  color: var(--bs-ink) !important;
+  border-top: 3px double var(--bs-rule);
+  font-family: var(--bs-font-sans);
+  font-size: 0.85rem;
+}
+
+#footer a, .footer a { color: var(--bs-ink) !important; }
+
+/* 链接：默认黑色，hover 红色下划线 */
+.post-content a, .markdown-body a {
+  color: var(--bs-ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--bs-rule);
+}
+.post-content a:hover, .markdown-body a:hover {
+  color: var(--bs-accent);
+  border-bottom-color: var(--bs-accent);
+}
+
+/* 列表缩进 */
+.post-content ul, .post-content ol {
+  padding-left: 1.5em;
+  margin: 0.8em 0;
+}
+
+.post-content li { margin: 0.3em 0; }
+
+/* 响应式 */
+@media (max-width: 768px) {
+  #navbar .navbar-brand strong { font-size: 1.8rem; }
+  .post-title { font-size: 1.6rem; }
+  .index-header a { font-size: 1.2rem; }
+  #board .row .index-card { border-right: none !important; }
+}
