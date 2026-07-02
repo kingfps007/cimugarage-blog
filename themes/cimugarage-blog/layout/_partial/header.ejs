@@ -1,0 +1,69 @@
+<%
+// 顶部 header：logo + nav + 主题切换 + 语言切换
+var lang = page.lang || (config.language === 'zh-CN' ? 'zh-CN' : 'en');
+var isEn = lang === 'en';
+var menu = isEn ? (theme.menu.en || []) : (theme.menu['zh-CN'] || []);
+
+// currentPath：去掉前导 /、去掉语言前缀（en/）、去掉尾斜杠
+// 这样无论当前是中文还是英文，currentPath 都是同一份"语言中性"路径
+var currentPath = (page.path || '').replace(/^\/+/, '').replace(/\/+$/, '');
+if (currentPath === 'en') {
+  currentPath = '';
+} else if (currentPath.indexOf('en/') === 0) {
+  currentPath = currentPath.substring(3);
+}
+%>
+<header class="site-header" role="banner">
+  <div class="container header-inner">
+    <a class="brand" href="<%= isEn ? '/en/' : '/' %>" aria-label="<%= theme.site.title %>">
+      <span class="brand-name"><%= theme.site.title %></span>
+    </a>
+
+    <nav class="primary-nav" aria-label="主导航">
+      <ul>
+        <% menu.forEach(function(item) {
+             var itemPath = item.url.replace(/^\//, '').replace(/\/+$/, '');
+             var active = false;
+             if (item.id === 'home') {
+               active = currentPath === '';
+             } else {
+               active = currentPath === itemPath;
+             }
+        %>
+          <li><a href="<%= item.url %>" <%= active ? 'aria-current="page" class="active"' : '' %>><%= item.text %></a></li>
+        <% }); %>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <%
+        // 语言切换：始终基于 currentPath（语言中性）
+        var targetPath;
+        if (isEn) {
+          targetPath = currentPath;
+        } else {
+          targetPath = currentPath ? 'en/' + currentPath : 'en';
+        }
+        var langSwitchHref;
+        if (targetPath === '' || targetPath === 'en') {
+          // home 情况
+          langSwitchHref = isEn ? '/' : '/en/';
+        } else if (/\.[a-z]+$/i.test(targetPath)) {
+          // 文件型 URL（.html 等）→ 不加尾 /
+          langSwitchHref = '/' + targetPath;
+        } else {
+          langSwitchHref = '/' + targetPath + '/';
+        }
+      %>
+      <a class="lang-switch" href="<%= langSwitchHref %>" hreflang="<%= isEn ? 'zh-CN' : 'en' %>">
+        <%= isEn ? '中文' : 'EN' %>
+      </a>
+      <% if (theme.dark_mode.enabled) { %>
+        <button class="theme-toggle" type="button" aria-label="切换主题" title="切换主题">
+          <span class="theme-icon-light" aria-hidden="true">☀</span>
+          <span class="theme-icon-dark" aria-hidden="true">☾</span>
+        </button>
+      <% } %>
+    </div>
+  </div>
+</header>

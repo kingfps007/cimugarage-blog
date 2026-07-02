@@ -1,0 +1,27 @@
+<%
+// 通用页面：about / privacy / 404
+var lang = page.lang || (config.language === 'zh-CN' ? 'zh-CN' : 'en');
+var isEn = lang === 'en';
+
+// 404 页面特殊处理
+if (is_home() === false && page.layout === 'page' && page.path && page.path.indexOf('404') !== -1) { %>
+  <div class="container error-page">
+    <h1>404</h1>
+    <p class="error-msg"><%= isEn ? 'Page not found. It may have been moved or removed.' : '页面未找到。可能链接拼错，或文章已移除。' %></p>
+    <ul class="error-links">
+      <li><a href="<%= isEn ? '/en/' : '/' %>"><%= isEn ? '← Home' : '← 返回首页' %></a></li>
+      <li><a href="<%= isEn ? '/en/archives/' : '/archives/' %>"><%= isEn ? 'Browse archives' : '浏览归档' %></a></li>
+    </ul>
+  </div>
+<% } else { %>
+  <article class="page page-detail" itemscope itemtype="https://schema.org/WebPage">
+    <div class="container">
+      <header class="page-header">
+        <h1 class="page-title" itemprop="headline"><%= page.title %></h1>
+      </header>
+      <div class="page-content" itemprop="mainContentOfPage">
+        <%- page.content %>
+      </div>
+    </div>
+  </article>
+<% } %>
