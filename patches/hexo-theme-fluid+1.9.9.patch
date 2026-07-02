@@ -1,0 +1,18 @@
+diff --git a/node_modules/hexo-theme-fluid/layout/_partials/css.ejs b/node_modules/hexo-theme-fluid/layout/_partials/css.ejs
+index c86241d..384a667 100644
+--- a/node_modules/hexo-theme-fluid/layout/_partials/css.ejs
++++ b/node_modules/hexo-theme-fluid/layout/_partials/css.ejs
+@@ -6,11 +6,8 @@
+ <% } %>
+ <% page.css_snippets = [] %>
+ 
+-<!-- 主题依赖的图标库，不要自行修改 -->
+-<!-- Do not modify the link that theme dependent icons -->
+-<%- css('//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css') %>
+-
+-<%- css(theme.static_prefix.iconfont || theme.iconfont) %>
++<!-- 主题依赖的图标库（已本地化到 source/css/iconfont/iconfont.css） -->
++<%- css(theme.iconfont) %>
+ 
+ <%- css_ex(theme.static_prefix.internal_css, 'main.css') %>
+ 

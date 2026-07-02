@@ -61,8 +61,12 @@ prismjs:
   enable: false
 
 # ====== 首页 ======
-# 首页由 source/_posts/index.md 提供（permalink: /, layout: index）
-# 不启用 hexo-generator-index（会产生 /off/ 垃圾）
+# fluid 自带 index 生成器，需要 index_generator 配置（不是 hexo-generator-index 插件）
+# fluid 已接管首页生成；_posts/index.md（permalink: /）作为首页静态占位
+index_generator:
+  path: ''
+  per_page: 10
+  order_by: -date
 
 # ====== 分类 / 标签页 ======
 category_generator:
@@ -83,8 +87,8 @@ permalink_defaults:
   pretty_urls:
     trailing_index: true
 
-# ====== 主题（独立 cimugarage-blog 主题，保护 hvac 站 cimu-kb） ======
-theme: cimugarage-blog
+# ====== 主题（hexo-theme-fluid，杂志卡片风格，内置评论/搜索/暗色） ======
+theme: fluid
 
 # ====== 部署（ESA Pages） ======
 deploy:
