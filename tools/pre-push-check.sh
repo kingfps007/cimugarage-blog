@@ -32,6 +32,8 @@ REQUIRED=(
   "public/wai-she-equipments/index.html"
   "public/en/wai-she-equipments/index.html"
   "public/chai-chu-raid-he-lvm/index.html"
+  "public/fei-niu-zhuan-linuxnas/index.html"
+  "public/ji-yu-chao-sheng-bo-wu-hua-yu-duo-chuan-gan-qi-dan-pian-ji-zhi-neng-kong-zhi-de-zheng-fa-leng-que-jing-hua-jia-shi-xi-tong/index.html"
 )
 MISSING=0
 for f in "${REQUIRED[@]}"; do
