@@ -7,7 +7,9 @@
     "version": "7.3.0"
   },
   "scripts": {
+    "prebuild": "git submodule update --init --recursive",
     "build": "hexo generate",
+    "postbuild": "node scripts/copy-redirects.js",
     "clean": "hexo clean",
     "server": "hexo server",
     "deploy": "echo 'ESA Pages 自动部署，推 git 即可' && exit 0",
