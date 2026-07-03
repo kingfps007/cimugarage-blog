@@ -12,10 +12,13 @@
 /archives/blog-security/         /security-of-blog/      301
 /archives/linuxru-men/           /linux-intro/           301
 /archives/linux-intro/           /linux-intro/           301
-/archives/wai-she-equipments/    /peripherals/           301
+/archives/wai-she-equipments/    /wai-she-equipments/    301
 /archives/about/                 /about/                 301
 /archives                       /archives/              301
 /archives/                      /archives/              301
+
+# ----- Moments 瞬间归档页（Halo 旧 Moments 路径统一到新站） -----
+/moments                         /moments/               301
 
 # ----- 通用兜底 -----
 /feed/                           /rss2.xml               301
