@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+  // 同步脚本：在 CSS 加载前应用主题，避免深色模式用户首屏白闪
+  // v4.4.6：不读 prefers-color-scheme（避免 Windows 11「应用模式」深色导致页面默认深色）
+  // 仅在用户显式点过深色按钮时（localStorage.theme === 'dark'）才深色
+  (function() {
+    try {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    } catch (e) {}
+  })();
+</script>
+<title><% if (page.title === config.title) { %><%= config.title %><% } else { %><%= page.title %> | <%= config.title %><% } %></title>
+<meta name="description" content="<%= page.description || config.description %>">
+<meta name="keywords" content="<%= config.keywords %>">
+<meta property="og:title" content="<%= page.title %> | <%= config.title %>">
+<meta property="og:description" content="<%= page.description || config.description %>">
+<meta property="og:type" content="<%= page.type === 'kb' ? 'article' : 'website' %>">
+<meta property="og:url" content="<%= config.url + url_for(page.path) %>">
+<meta property="og:site_name" content="<%= config.title %>">
+<meta property="og:locale" content="zh_CN">
+<meta name="twitter:card" content="summary">
+<!-- v4.4.8.3 缓存控制：HTML 1小时，浏览器硬刷新可立即看到推送内容；ESAMeta 优先级低于 HTTP 头，兜底用 -->
+<meta http-equiv="Cache-Control" content="public, max-age=3600">
+<meta http-equiv="Expires" content="3600">
+<link rel="icon" type="image/svg+xml" href="<%= url_for('/favicon.svg') %>">
+<link rel="stylesheet" href="<%= url_for('/css/style.css') %>">
+<!-- KaTeX for LaTeX rendering (本地化) -->
+<link rel="stylesheet" href="<%= url_for('/lib/katex/katex.min.css') %>">
+</head>
+<body class="<%= page.type || (page.layout === 'post' ? 'blog-post' : 'page') %> <%= theme.site_type === 'blog' ? 'site-blog' : 'site-kb' %>">
+  <%- partial('_partial/header') %>
+
+  <%- partial('_partial/search-overlay') %>
+
+  <%# ===== KB 模式：知识库文章页 ===== %>
+  <% if (page.type === 'kb' || (theme.site_type === 'kb' && page.layout === 'post')) { %>
+    <div class="breadcrumb-wrap">
+    <%- partial('_partial/breadcrumb') %>
+    </div>
+
+    <div class="reading-progress" id="readingProgress"></div>
+
+    <div class="kb-layout">
+      <button class="sidebar-toggle" onclick="toggleSidebar();event.stopPropagation()" title="知识库导航">
+        <span>☰</span>
+        <span class="icon-text">知识库</span>
+      </button>
+      <button class="toc-toggle" onclick="toggleToc();event.stopPropagation()" title="文章目录">
+        <span>📑</span>
+        <span class="icon-text">目录</span>
+      </button>
+      <aside class="kb-sidebar" id="kbSidebar">
+        <%- partial('_partial/sidebar') %>
+      </aside>
+      <main class="kb-main">
+        <div class="kb-main-content">
+          <article>
+            <h1><%= page.title %></h1>
+            <% if (page.updated) { %><time class="article-updated" datetime="<%= page.updated.toISOString() %>">📅 最后更新：<%= date(page.updated, 'YYYY-MM-DD') %></time><% } %>
+            <%- page.content %>
+          </article>
+          <nav class="article-nav" id="articleNav"></nav>
+        </div>
+        <%- partial('_partial/footer') %>
+      </main>
+      <aside class="kb-toc" id="kbToc">
+        <h4>目录</h4>
+        <nav id="tocNav"></nav>
+      </aside>
+    </div>
+
+  <%# ===== Blog 模式：文章页（左信息流 + 中文章 + 右 TOC） ===== %>
+  <% } else if (theme.site_type === 'blog' && page.layout === 'post') { %>
+    <div class="reading-progress" id="readingProgress"></div>
+
+    <div class="blog-layout">
+      <button class="sidebar-toggle" onclick="toggleSidebar();event.stopPropagation()" title="全部文章">
+        <span>☰</span>
+        <span class="icon-text">文章</span>
+      </button>
+      <% if (theme.blog.post.show_toc) { %>
+      <button class="toc-toggle toc-toggle-blog" onclick="toggleToc();event.stopPropagation()" title="文章目录">
+        <span>📑</span>
+        <span class="icon-text">目录</span>
+      </button>
+      <% } %>
+      <aside class="blog-article-list" id="blogArticleList">
+        <%- partial('_partial/blog-sidebar') %>
+      </aside>
+      <main class="blog-main">
+        <div class="blog-main-content">
+          <article>
+            <header class="article-header">
+              <h1><%= page.title %></h1>
+              <div class="article-meta">
+                <% if (page.date) { %><time class="article-date" datetime="<%= page.date.toISOString() %>"><%= date(page.date, 'YYYY-MM-DD') %></time><% } %>
+                <% if (page.updated) { %><time class="article-updated" datetime="<%= page.updated.toISOString() %>">更新 <%= date(page.updated, 'YYYY-MM-DD') %></time><% } %>
+                <% if (page.category) { %><span class="article-category"><%= page.category %></span><% } %>
+                <% if (page.tags && page.tags.length) { %>
+                  <span class="article-tags">
+                  <% page.tags.forEach(function(tag, i) { %>
+                    <a href="<%= url_for(config.tag_dir + '/' + tag.name) %>">#<%= tag.name %></a>
+                  <% }) %>
+                  </span>
+                <% } %>
+              </div>
+            </header>
+            <%- page.content %>
+          </article>
+          <% if (theme.blog.post.show_article_nav) { %>
+          <nav class="article-nav" id="articleNav">
+            <% if (page.prev) { %><a class="article-nav-link prev" href="<%= url_for(page.prev.path) %>">← <%= page.prev.title %></a><% } else { %><a class="article-nav-link prev" style="opacity:0.35">← 已是第一篇</a><% } %>
+            <% if (page.next) { %><a class="article-nav-link next" href="<%= url_for(page.next.path) %>"><%= page.next.title %> →</a><% } else { %><a class="article-nav-link next" style="opacity:0.35">已是最后一篇 →</a><% } %>
+          </nav>
+          <% } %>
+        </div>
+      </main>
+      <% if (theme.blog.post.show_toc) { %>
+      <aside class="kb-toc" id="kbToc">
+        <h4>目录</h4>
+        <nav id="tocNav"></nav>
+      </aside>
+      <% } %>
+    </div>
+
+  <%# ===== 工具全屏页 ===== %>
+  <% } else if (page.type === 'tools') { %>
+    <%- body %>
+
+  <%# ===== Blog 模式首页（type=index） / KB 模式首页 ===== %>
+  <% } else if (page.type === 'index') { %>
+    <%- body %>
+
+  <%# ===== Moments 瞬间归档页 ===== %>
+  <% } else if (page.type === 'moments') { %>
+    <%- body %>
+
+  <%# ===== 404 错误页 ===== %>
+  <% } else if (page.type == '404') { %>
+    <%
+      const isEn404 = page.lang === 'en';
+      const t = {
+        title: isEn404 ? 'Page Not Found' : '页面未找到',
+        big: '404',
+        desc: isEn404
+          ? 'The page you are looking for does not exist or has been moved.'
+          : '您访问的页面不存在，或已被移动。',
+        home: isEn404 ? 'Back Home' : '返回首页',
+        archives: isEn404 ? 'Browse Archives' : '浏览归档',
+        search: isEn404 ? 'Search' : '站内搜索'
+      };
+    %>
+    <div class="error-page-wrap">
+      <div class="error-page-inner">
+        <div class="error-page-big"><%= t.big %></div>
+        <h1 class="error-page-title"><%= t.title %></h1>
+        <p class="error-page-desc"><%= t.desc %></p>
+        <nav class="error-page-actions">
+          <a href="<%= url_for('/') %>" class="error-action-btn error-action-primary"><%= t.home %></a>
+          <a href="<%= url_for('/archives/') %>" class="error-action-btn"><%= t.archives %></a>
+          <a href="<%= url_for(isEn404 ? '/en/moments/' : '/moments/') %>" class="error-action-btn"><%= isEn404 ? 'Moments' : '瞬间' %></a>
+          <a href="<%= url_for('/about/') %>" class="error-action-btn"><%= isEn404 ? 'About' : '关于' %></a>
+          <button class="error-action-btn" onclick="toggleSearchOverlay();event.stopPropagation()"><%= t.search %></button>
+        </nav>
+      </div>
+    </div>
+
+  <%# ===== 归档/分类/标签列表页（带侧栏，与文章页一致） ===== %>
+  <% } else if (page.posts) { %>
+    <div class="newspaper-wrap archive-wrap">
+      <header class="newspaper-masthead">
+        <div class="newspaper-masthead-deco"></div>
+        <div class="newspaper-masthead-mobile">
+          <h1 class="newspaper-title"><%= page.title %></h1>
+          <p class="newspaper-subtitle"><% if (page.posts.length) { %>共 <%= page.posts.length %> 篇文章<% } else { %>暂无文章<% } %></p>
+        </div>
+      </header>
+      <div class="newspaper-layout">
+        <main class="newspaper-main">
+          <% if (page.posts.length) { %>
+          <ul class="archive-post-list">
+            <% page.posts.each(function(post) { %>
+            <li class="archive-post-item">
+              <time datetime="<%= post.date.toISOString() %>"><%= date(post.date, 'YYYY-MM-DD') %></time>
+              <a href="<%= url_for(post.path) %>"><%= post.title %></a>
+            </li>
+            <% }) %>
+          </ul>
+          <% if (page.prev || page.next) { %>
+          <nav class="pagination">
+            <% if (page.prev) { %><a class="page-prev" href="<%= url_for(page.prev_link) %>">← 上一页</a><% } %>
+            <% if (page.next) { %><a class="page-next" href="<%= url_for(page.next_link) %>">下一页 →</a><% } %>
+          </nav>
+          <% } %>
+          <% } else { %>
+          <p class="archive-empty">暂无文章</p>
+          <% } %>
+        </main>
+        <aside class="newspaper-sidebar"><%- partial('_partial/blog-sidebar') %></aside>
+      </div>
+    </div>
+
+  <%# ===== 通用页（about / privacy 等，带侧栏） ===== %>
+  <% } else { %>
+    <div class="newspaper-wrap">
+      <header class="newspaper-masthead">
+        <div class="newspaper-masthead-deco"></div>
+        <div class="newspaper-masthead-mobile">
+          <h1 class="newspaper-title"><%= page.title %></h1>
+        </div>
+      </header>
+      <div class="newspaper-layout">
+        <main class="newspaper-main">
+          <article class="blog-main-article">
+            <%- page.content %>
+          </article>
+        </main>
+        <aside class="newspaper-sidebar"><%- partial('_partial/blog-sidebar') %></aside>
+      </div>
+    </div>
+  <% } %>
+
+
+  <button class="back-to-top" id="backToTop" onclick="scrollToTop()" title="回到顶部">↑</button>
+
+  <script src="<%= url_for('/js/nav-tree.js') %>?v=5"></script>
+  <script src="<%= url_for('/js/toc.js') %>?v=5"></script>
+  <script src="<%= url_for('/js/search.js') %>?v=5"></script>
+
+  <script>
+  function applyTheme(dark) {
+    var html = document.documentElement;
+    var btn = document.querySelector('.theme-toggle');
+    if (dark) {
+      html.setAttribute('data-theme', 'dark');
+      if (btn) btn.textContent = '🌙';
+    } else {
+      html.removeAttribute('data-theme');
+      if (btn) btn.textContent = '☀️';
+    }
+  }
+  (function() {
+    // v4.4.6：去掉 prefers-color-scheme 检测和监听——首次访问默认浅色
+    // 不再跟随系统主题/Windows 11 应用模式
+    var saved = localStorage.getItem('theme');
+    if (saved === 'dark') { applyTheme(true); }
+    else if (saved === 'light') { applyTheme(false); }
+    // 没有 saved：保持 CSS 默认（无 data-theme，即浅色）
+  })();
+  function toggleTheme() {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    applyTheme(!isDark);
+  }
+
+  (function() {
+    document.querySelectorAll('.kb-main article table, .blog-main article table, .container article table, .tools-fullscreen table').forEach(function(t) {
+      if (t.parentElement.classList.contains('table-wrap')) return;
+      var wrap = document.createElement('div');
+      wrap.className = 'table-wrap';
+      t.parentNode.insertBefore(wrap, t);
+      wrap.appendChild(t);
+    });
+  })();
+
+  (function() {
+    window.addEventListener('scroll', function() {
+      var scrollTop = window.scrollY;
+      var docHeight = document.documentElement.scrollHeight;
+      var windowHeight = window.innerHeight;
+      var totalScroll = docHeight - windowHeight;
+      var prog = totalScroll > 0 ? Math.min((scrollTop / totalScroll) * 100, 100) : 0;
+      var bar = document.getElementById('readingProgress');
+      if (bar) bar.style.width = prog + '%';
+
+      var btn = document.getElementById('backToTop');
+      if (btn) { btn.classList.toggle('visible', scrollTop > 400); }
+    });
+  })();
+
+  function scrollToTop() {
+    var startY = window.scrollY, diff = -startY, dur = 400, startTime = null;
+    function step(t) {
+      if (!startTime) startTime = t;
+      var elapsed = t - startTime, prog = Math.min(elapsed / dur, 1);
+      var ease = prog < 0.5 ? 4*prog*prog*prog : 1 - Math.pow(-2*prog+2, 3)/2;
+      window.scrollTo(0, startY + diff * ease);
+      if (prog < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  document.querySelectorAll('.kb-main article img, .blog-main article img, .container article img').forEach(function(img) {
+    if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+  });
+
+  (function() {
+    var navEl = document.getElementById('articleNav');
+    if (!navEl || !document.body.classList.contains('kb')) return;
+    var dataEl = document.getElementById('kbSwitcherData');
+    if (!dataEl) return;
+    try {
+      var data = JSON.parse(dataEl.textContent);
+      if (!data.articles) return;
+      var currentPath = window.location.pathname.replace(/\/$/, '');
+      var norm = function(p) { return p.replace(/\/$/, '').replace(/\.html$/, '').replace(/^\//, ''); };
+      var cn = norm(currentPath);
+      var activeKb = null;
+      for (var id in data.articles) {
+        if (!data.articles.hasOwnProperty(id)) continue;
+        var found = data.articles[id].some(function(p) { var c = norm(p); return cn === c || cn === c + '/index'; });
+        if (found) { activeKb = id; break; }
+      }
+      if (!activeKb) return;
+      var flat = data.articles[activeKb];
+      var idx = -1;
+      for (var i = 0; i < flat.length; i++) {
+        var c = norm(flat[i]);
+        if (cn === c || cn === c + '/index') { idx = i; break; }
+      }
+      var prev = idx > 0 ? flat[idx - 1] : null;
+      var next = idx < flat.length - 1 ? flat[idx + 1] : null;
+
+      function findTitle(path) {
+        var normP = norm(path);
+        var links = document.querySelectorAll('.sidebar-nav a');
+        for (var j = 0; j < links.length; j++) {
+          if (norm(links[j].getAttribute('href') || '') === normP) return links[j].textContent.trim();
+        }
+        return '返回列表';
+      }
+
+      var html = '';
+      html += '<a class="article-nav-link prev" href="' + (prev || '#') + '"' + (!prev ? ' style="opacity:0.35"' : '') + '>← ' + (prev ? findTitle(prev) : '已是第一篇') + '</a>';
+      html += '<a class="article-nav-link next" href="' + (next || '#') + '"' + (!next ? ' style="opacity:0.35"' : '') + '>' + (next ? findTitle(next) : '已是最后一篇') + ' →</a>';
+      navEl.innerHTML = html;
+    } catch(e) {}
+  })();
+
+  <% if (page.type === 'kb' || (theme.site_type === 'blog' && page.layout === 'post')) { %>
+  (function() {
+    var script = document.createElement('script');
+    script.type = 'application/ld+json';
+    var article = document.querySelector('.kb-main article, .blog-main article');
+    var headings = article ? article.querySelectorAll('h2') : [];
+    var sections = [];
+    headings.forEach(function(h) { sections.push(h.textContent); });
+    script.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': '<%= page.layout === 'post' ? 'BlogPosting' : 'TechArticle' %>',
+      'headline': '<%- page.title %>',
+      'description': '<%- (page.description || config.description).replace(/'/g, "\\'") %>',
+      'datePublished': '<%= page.date ? date(page.date, 'YYYY-MM-DD') : '' %>',
+      'dateModified': '<%= page.updated ? date(page.updated, 'YYYY-MM-DD') : (page.date ? date(page.date, 'YYYY-MM-DD') : '') %>',
+      'about': sections.slice(0, 3),
+      'inLanguage': 'zh-CN'
+    });
+    document.head.appendChild(script);
+  })();
+  <% } %>
+  </script>
+  <!-- KaTeX for LaTeX rendering (本地化，避免公共 CDN) -->
+  <script defer src="<%= url_for('/lib/katex/katex.min.js') %>"></script>
+  <script defer src="<%= url_for('/lib/katex/auto-render.min.js') %>"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      if (typeof renderMathInElement === 'undefined' || typeof katex === 'undefined') return;
+
+      // 第零步：修复 markdown 渲染后的紧邻问题（避免 <strong>$..$</strong> 错误）
+      // 1) </strong> 紧接 $ 公式：在中间插入零宽空格 \u200B
+      // 2) 公式结束 $ 紧接 % 符号：同样插入零宽
+      (function preFixAdjacent() {
+        ['.kb-main', '.container', 'article'].forEach(function(sel) {
+          document.querySelectorAll(sel).forEach(function(el) {
+            // 只在子节点层做一次 innerHTML 替换，避免破坏 KaTeX 后续渲染
+            var html = el.innerHTML;
+            var orig = html;
+            html = html.replace(/(<\/strong>)(?=\$)/g, '$1\u200B');
+            html = html.replace(/(<\/em>)(?=\$)/g, '$1\u200B');
+            if (html !== orig) el.innerHTML = html;
+          });
+        });
+      })();
+
+      // 第零点五步：修复 marked 未识别的 **xx$yy$** 加粗（$ 字符干扰了 strong 配对）
+      // 模式 1: **XX$YY$**  →  <strong>XX</strong>$YY$
+      (function fixUnmatchedBold() {
+        ['.kb-main', '.container', 'article'].forEach(function(sel) {
+          document.querySelectorAll(sel + ' li, ' + sel + ' p, ' + sel + ' td, ' + sel + ' th').forEach(function(el) {
+            var html = el.innerHTML;
+            var orig = html;
+            html = html.replace(/\*\*([^*\n]+?)\$([^*\n]+?)\$\*\*/g, '<strong>$1</strong>$$$2$$');
+            if (html !== orig) el.innerHTML = html;
+          });
+        });
+      })();
+
+      // 第一步：手动处理块级公式 $$...$$（marked 不会自动转 KaTeX 块级）
+      // 用 TreeWalker 找出所有含 $$..$$ 的文本节点，提取 LaTeX 渲染
+      (function fixDisplayMath(root) {
+        if (!root) return;
+        var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+          acceptNode: function(n) {
+            var p = n.parentNode;
+            if (!p) return NodeFilter.FILTER_REJECT;
+            var tag = p.nodeName;
+            if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'PRE' || tag === 'CODE' || tag === 'TEXTAREA') return NodeFilter.FILTER_REJECT;
+            // 跳过已经在 KaTeX 容器内的文本
+            if (p.closest && p.closest('.katex, .katex-display')) return NodeFilter.FILTER_REJECT;
+            return n.textContent.indexOf('$$') >= 0 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+          }
+        }, false);
+        var nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+
+        nodes.forEach(function(node) {
+          var text = node.textContent;
+          if (text.indexOf('$$') < 0) return;
+          var regex = /\$\$([\s\S]+?)\$\$/g;
+          var match, lastIdx = 0;
+          var frag = document.createDocumentFragment();
+          var replaced = false;
+          while ((match = regex.exec(text)) !== null) {
+            replaced = true;
+            if (match.index > lastIdx) {
+              frag.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
+            }
+            var div = document.createElement('div');
+            try {
+            katex.render(match[1].trim(), div, {displayMode: true, throwOnError: false, output: 'html'});
+            div.classList.add('katex-display-fix');
+          } catch (e) {
+            div.textContent = match[0];
+          }
+            frag.appendChild(div);
+            lastIdx = regex.lastIndex;
+          }
+          if (replaced) {
+            if (lastIdx < text.length) frag.appendChild(document.createTextNode(text.slice(lastIdx)));
+            node.parentNode.replaceChild(frag, node);
+          }
+        });
+      })(document.body);
+
+      // 第二步：处理行内 $...$（KaTeX auto-render）
+      renderMathInElement(document.body, {
+        delimiters: [
+          {left: "$", right: "$", display: false}
+        ],
+        throwOnError: false
+      });
+    });
+  </script>
+</body>
+</html>

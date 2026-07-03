@@ -1,0 +1,41 @@
+<div class="newspaper-wrap moments-wrap">
+  <header class="newspaper-masthead">
+    <div class="newspaper-masthead-deco"></div>
+    <div class="newspaper-masthead-mobile">
+      <h1 class="newspaper-title"><%= page.title %></h1>
+      <% if (page.description) { %><p class="newspaper-subtitle"><%= page.description %></p><% } %>
+    </div>
+  </header>
+
+  <div class="newspaper-layout">
+    <main class="newspaper-main">
+      <% if (site.data.moments && site.data.moments.length) { %>
+        <section class="moments-list">
+          <% site.data.moments.forEach(function(m) { %>
+          <article class="moment-item">
+            <time class="moment-date" datetime="<%= m.date %>">
+              <%= date(m.date, 'YYYY-MM-DD HH:mm') %>
+            </time>
+            <div class="moment-content">
+              <p><%- m.content %></p>
+              <% if (m.image) { %>
+              <figure class="moment-image">
+                <img src="<%= m.image %>" alt="瞬间附图" loading="lazy">
+              </figure>
+              <% } %>
+            </div>
+          </article>
+          <% }) %>
+        </section>
+      <% } else { %>
+        <div class="moments-empty">
+          <p><%= page.lang === 'en' ? 'No moments yet.' : '还没有记录任何瞬间。' %></p>
+        </div>
+      <% } %>
+    </main>
+
+    <aside class="newspaper-sidebar">
+      <%- partial('_partial/blog-sidebar') %>
+    </aside>
+  </div>
+</div>

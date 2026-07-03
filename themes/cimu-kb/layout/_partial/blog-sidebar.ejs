@@ -1,0 +1,150 @@
+<%
+// 收集文章（按当前页语言过滤）
+const isEn = page.lang === 'en';
+const langFilter = isEn ? 'en' : 'zh-CN';
+const allPosts = site.posts
+  .filter(p => p.layout === 'post' && p.lang === langFilter)
+  .sort('-date');
+
+// 当前文章路径（用于高亮）
+const currentPath = (page.path || '').replace(/\/$/, '').replace(/\.html$/, '');
+
+// 收集所有分类
+const allCategories = [];
+site.categories.forEach(function(cat) {
+  allCategories.push({ name: cat.name, length: cat.length, path: url_for(cat.path) });
+});
+
+// 收集所有标签
+const allTags = [];
+site.tags.forEach(function(tag) {
+  allTags.push({ name: tag.name, length: tag.length, path: url_for(tag.path) });
+});
+
+// 标签云：按数量排序取前 N
+const tagCloud = allTags.slice().sort((a, b) => b.length - a.length).slice(0, theme.blog.sidebar.tag_cloud_count || 20);
+
+// 最近文章
+const recentPosts = allPosts.slice(0, theme.blog.sidebar.recent_count || 5);
+
+// 当前年份
+const currentYear = new Date().getFullYear();
+const sinceYear = (config.since || currentYear);
+// 同年只显示一个年份，避免 © 2026–2026
+const yearRange = sinceYear === currentYear ? String(currentYear) : (sinceYear + '–' + currentYear);
+
+// 计算语言切换目标 URL（如果对应语言版本不存在，回退到对应语言首页）
+let langSwitchUrl;
+if (isEn) {
+  // 英文 → 中文：中文版一定存在
+  langSwitchUrl = '/' + (page.path || '').replace(/^en\//, '');
+} else {
+  // 中文 → 英文：检测英文版是否存在
+  const enPath = (page.path || '').replace(/^([^/]+)/, 'en/$1');
+  const enExists = site.posts.some(p => p.path === enPath || p.path === enPath.replace(/\/$/, '') + '/');
+  langSwitchUrl = enExists ? '/en/' + (page.path || '') : '/en/';
+}
+const isMomentsPage = page.path === 'moments/' || page.path === 'en/moments/';
+const isArchivesPage = (page.path || '').indexOf('archives') >= 0;
+
+// 路径（中英自适应）
+const momentsPath = isEn ? '/en/moments/' : '/moments/';
+const archivesPath = isEn ? '/en/archives/' : '/archives/';
+const aboutPath = isEn ? '/en/about/' : '/about/';
+const privacyPath = isEn ? '/en/about/privacy/' : '/about/privacy/';
+%>
+
+<div class="blog-sidebar-inner">
+
+  <%# === 站名（可点回首页） + 副标 + 元信息（日期+文章数） === %>
+  <header class="blog-sidebar-brand">
+    <a href="<%= url_for('/index.html') %>" class="blog-sidebar-logo"><%= isEn ? (config.title_en || config.title) : config.title %></a>
+    <p class="blog-sidebar-tagline"><%= isEn ? (config.subtitle_en || config.subtitle) : config.subtitle %></p>
+    <p class="blog-sidebar-meta"><%= date(new Date(), 'YYYY-MM-DD') %> · <%= isEn ? (allPosts.length + ' posts') : ('共 ' + allPosts.length + ' 篇') %></p>
+  </header>
+
+  <%# === 主题切换 + 语言切换 + 搜索 + 瞬间（一行式快捷区） === %>
+  <div class="blog-sidebar-actions">
+    <button class="blog-action-btn" onclick="toggleTheme()" title="<%= isEn ? 'Toggle theme' : '切换深色/亮色模式' %>" aria-label="theme">☀️ / 🌙</button>
+    <a class="blog-action-btn" href="<%= url_for(langSwitchUrl) %>" title="<%= isEn ? 'Switch to Chinese' : 'Switch to English' %>" aria-label="lang"><%= isEn ? '中' : 'En' %></a>
+    <button class="blog-action-btn" onclick="toggleSearchOverlay();event.stopPropagation()" title="<%= isEn ? 'Search' : '搜索' %>" aria-label="search">🔍</button>
+    <a class="blog-action-btn <%= isMomentsPage ? 'active' : '' %>" href="<%= url_for(momentsPath) %>" title="<%= isEn ? 'Moments' : '瞬间' %>" aria-label="moments">✨</a>
+  </div>
+
+  <%# === 折叠分区 === %>
+
+  <% if (theme.blog.sidebar.show_categories && allCategories.length > 0) { %>
+  <details class="blog-sidebar-details" open>
+    <summary class="blog-sidebar-summary"><%= isEn ? '📂 Categories' : '📂 分类' %></summary>
+    <ul class="blog-category-list">
+      <% allCategories.forEach(function(cat) { %>
+      <li>
+        <a href="<%= cat.path %>">
+          <span class="name"><%= cat.name %></span>
+          <span class="count"><%= cat.length %></span>
+        </a>
+      </li>
+      <% }) %>
+    </ul>
+  </details>
+  <% } %>
+
+  <% if (theme.blog.sidebar.show_tags && tagCloud.length > 0) { %>
+  <details class="blog-sidebar-details">
+    <summary class="blog-sidebar-summary"><%= isEn ? '🏷️ Tags' : '🏷️ 标签' %> <span class="blog-sidebar-count">(<%= allTags.length %>)</span></summary>
+    <div class="blog-tag-cloud">
+      <% tagCloud.forEach(function(tag) { %>
+        <a href="<%= tag.path %>" class="blog-tag" data-count="<%= tag.length %>">
+          <%= tag.name %><sup><%= tag.length %></sup>
+        </a>
+      <% }) %>
+    </div>
+  </details>
+  <% } %>
+
+  <% if (theme.blog.sidebar.show_recent && recentPosts.length > 0) { %>
+  <details class="blog-sidebar-details" open>
+    <summary class="blog-sidebar-summary"><%= isEn ? '🆕 Recent' : '🆕 最新' %></summary>
+    <ul class="blog-recent-list">
+      <% recentPosts.forEach(function(p) { %>
+      <li>
+        <a href="<%= url_for(p.path) %>" class="<%= currentPath === p.path.replace(/\/$/, '').replace(/\.html$/, '') ? 'active' : '' %>">
+          <span class="title"><%= p.title %></span>
+          <time class="date"><%= date(p.date, 'YYYY-MM-DD') %></time>
+        </a>
+      </li>
+      <% }) %>
+    </ul>
+  </details>
+  <% } %>
+
+  <%# === 归档按钮（链接到归档页，不展开树） === %>
+  <a class="blog-sidebar-archives-link <%= isArchivesPage ? 'active' : '' %>" href="<%= url_for(archivesPath) %>">
+    <span><%= isEn ? '📚 Archives' : '📚 归档' %></span>
+    <span class="blog-sidebar-count"><%= allPosts.length %></span>
+  </a>
+
+  <%# === 备案号 + 版权 + 关于/隐私政策（始终展开） === %>
+  <footer class="blog-sidebar-footer">
+    <p class="blog-sidebar-links">
+      <a href="<%= url_for(aboutPath) %>"><%= isEn ? '📖 About' : '📖 关于' %></a>
+      <a href="<%= url_for(privacyPath) %>"><%= isEn ? '🔒 Privacy' : '🔒 隐私政策' %></a>
+    </p>
+    <p class="blog-sidebar-copyright">
+      © <%= yearRange %> <%= config.author %>
+    </p>
+    <p class="blog-sidebar-licence">
+      <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="noopener">CC BY 4.0</a>
+    </p>
+    <% if (config.icp) { %>
+    <p class="blog-sidebar-icp">
+      <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener"><%= config.icp %></a>
+    </p>
+    <% } %>
+    <% if (config.police) { %>
+    <p class="blog-sidebar-police">
+      <a href="https://beian.mps.gov.cn/" target="_blank" rel="noopener"><%= config.police %></a>
+    </p>
+    <% } %>
+  </footer>
+</div>

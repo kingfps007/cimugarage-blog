@@ -1,0 +1,237 @@
+<%
+// v3.0 通用化：
+//   kb 模式：保持原 navbar（桌面 + 移动）
+//   blog 模式：桌面端不显示，移动端显示汉堡菜单
+const isBlog = theme.site_type === 'blog';
+%>
+
+<% if (!isBlog) { %>
+<%# === kb 模式：原 navbar（桌面+移动） === %>
+<nav class="navbar">
+  <a href="<%= url_for('/index.html') %>" class="logo"><%= config.title %></a>
+  <ul class="nav-links">
+    <li class="nav-dropdown">
+      <a href="#" class="dropdown-toggle" onclick="toggleDropdown(event, this)">🔧 工具集 <span class="arrow">▾</span></a>
+      <ul class="dropdown-menu">
+        <% site.pages.filter(p => p.type === 'tools' && p.path !== 'tools/index.html').forEach(tool => { %>
+          <li><a href="<%= url_for(tool.path) %>"><%= tool.title %></a></li>
+        <% }) %>
+        <li><a href="<%= url_for('/hvac/tools/hydraulic-calc.html') %>">💧 不等温降法水力计算</a></li>
+        <% if (site.data['kb-articles'] && site.data['kb-articles'].tools_coming_soon) { %>
+          <li class="dropdown-section">
+            <span class="dropdown-label">即将上线</span>
+          </li>
+          <% site.data['kb-articles'].tools_coming_soon.forEach(function(t) { %>
+            <li><a href="#" class="disabled"><%= t.emoji %> <%= t.title %></a></li>
+          <% }) %>
+        <% } %>
+      </ul>
+    </li>
+    <% if (site.data['kb-articles'] && site.data['kb-articles'].knowledge_bases) {
+      site.data['kb-articles'].knowledge_bases.forEach(function(kb) { %>
+    <li class="nav-dropdown">
+      <a href="#" class="dropdown-toggle" onclick="toggleDropdown(event, this)"><%= kb.emoji %> <%= kb.name %> <span class="arrow">▾</span></a>
+      <ul class="dropdown-menu">
+        <li><a href="<%= url_for(kb.overview.path) %>"><%= kb.overview.emoji %> <%= kb.overview.title %></a></li>
+        <% kb.sections.forEach(function(sec) { %>
+          <li class="dropdown-section">
+            <span class="dropdown-label"><%= sec.name %></span>
+          </li>
+          <% sec.articles.forEach(function(art) { %>
+            <li><a href="<%= url_for(art.path) %>"><%= art.emoji %> <%= art.title %></a></li>
+          <% }) %>
+        <% }) %>
+      </ul>
+    </li>
+    <% }) } %>
+  </ul>
+  <button class="theme-toggle" onclick="toggleTheme()" title="切换深色/亮色模式">☀️</button>
+  <button class="search-icon-btn" onclick="toggleSearchOverlay();event.stopPropagation()" title="搜索">🔍</button>
+  <button class="hamburger" onclick="toggleMobileNav();event.stopPropagation()" aria-label="菜单">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<% } else { %>
+<%# === blog 模式：仅移动端显示（汉堡菜单） === %>
+<%
+  const isEn = page.lang === 'en';
+  let langSwitchUrl;
+  if (isEn) {
+    langSwitchUrl = '/' + (page.path || '').replace(/^en\//, '');
+  } else {
+    // 中文 → 英文：检测英文版是否存在，不存在则回退到英文首页
+    const enPath = (page.path || '').replace(/^([^/]+)/, 'en/');
+    const enExists = site.posts.some(p => p.path === enPath || p.path === enPath.replace(/\/$/, '') + '/');
+    langSwitchUrl = enExists ? '/en/' + (page.path || '') : '/en/';
+  }
+%>
+<nav class="navbar navbar-blog-mobile" id="navbarBlogMobile">
+  <a href="<%= url_for('/index.html') %>" class="logo"><%= config.title %></a>
+  <div class="navbar-blog-mobile-right">
+    <a class="lang-toggle" href="<%= url_for(langSwitchUrl) %>" title="切换中/英文"><%= isEn ? '中' : 'En' %></a>
+    <button class="theme-toggle" onclick="toggleTheme()" title="切换深色/亮色模式">☀️</button>
+    <button class="search-icon-btn" onclick="toggleSearchOverlay();event.stopPropagation()" title="搜索">🔍</button>
+    <button class="hamburger" onclick="toggleMobileNav();event.stopPropagation()" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<%# 移动端展开的导航面板（替代右栏内容） === %>
+<div class="mobile-nav-panel" id="mobileNavPanel">
+  <div class="mobile-nav-panel-inner">
+    <% const momentsPath = isEn ? '/en/moments/' : '/moments/'; %>
+    <% const archivesPath = isEn ? '/en/archives/' : '/archives/'; %>
+    <a href="<%= url_for(archivesPath) %>"><%= isEn ? '📚 Archives' : '📚 归档' %></a>
+    <a href="<%= url_for(momentsPath) %>"><%= isEn ? '✨ Moments' : '✨ 瞬间' %></a>
+    <hr>
+    <% site.categories.forEach(function(cat) { %>
+      <a href="<%= url_for(cat.path) %>">📂 <%= cat.name %> (<%= cat.length %>)</a>
+    <% }) %>
+    <hr>
+    <a href="mailto:<%= config.email %>">✉️ 邮箱</a>
+    <% if (config.icp) { %><p class="mobile-nav-icp"><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener"><%= config.icp %></a></p><% } %>
+    <% if (config.police) { %><p class="mobile-nav-icp"><a href="https://beian.mps.gov.cn/" target="_blank" rel="noopener"><%= config.police %></a></p><% } %>
+  </div>
+</div>
+<% } %>
+
+<script>
+function closeAllPanels() {
+  var overlay = document.getElementById('searchOverlay');
+  if (overlay) overlay.classList.remove('show');
+  var input = document.getElementById('searchInput');
+  var results = document.getElementById('searchResults');
+  if (input) { input.value = ''; input.blur(); }
+  if (results) results.innerHTML = '';
+  var navLinks = document.querySelector('.nav-links');
+  var hamburger = document.querySelector('.hamburger');
+  if (navLinks) navLinks.classList.remove('show');
+  if (hamburger) hamburger.classList.remove('active');
+  var sidebar = document.getElementById('kbSidebar');
+  if (sidebar) sidebar.classList.remove('open');
+  // 同时支持 kb 模式 + blog 模式 toc
+  var tocKb = document.getElementById('kbToc');
+  if (tocKb) tocKb.classList.remove('open');
+  var tocBlog = document.getElementById('blogToc');
+  if (tocBlog) tocBlog.classList.remove('open');
+  var kbdd = document.getElementById('kbSwitcherDropdown');
+  if (kbdd) kbdd.classList.remove('show');
+  // blog 模式移动端面板
+  var mobilePanel = document.getElementById('mobileNavPanel');
+  if (mobilePanel) mobilePanel.classList.remove('show');
+}
+
+function toggleSearchOverlay() {
+  var overlay = document.getElementById('searchOverlay');
+  var input = document.getElementById('searchInput');
+  if (!overlay || !input) return;
+  var wasOpen = overlay.classList.contains('show');
+  closeAllPanels();
+  if (!wasOpen) {
+    overlay.classList.add('show');
+    setTimeout(function(){ input.focus(); }, 100);
+  }
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    var overlay = document.getElementById('searchOverlay');
+    var input = document.getElementById('searchInput');
+    if (overlay) overlay.classList.remove('show');
+    if (input) { input.value = ''; input.blur(); }
+    var results = document.getElementById('searchResults');
+    if (results) results.innerHTML = '';
+  }
+});
+document.addEventListener('click', function(e) {
+  var overlay = document.getElementById('searchOverlay');
+  if (!overlay || !overlay.classList.contains('show')) return;
+  if (!e.target.closest('#searchOverlay') && !e.target.closest('.search-icon-btn')) {
+    overlay.classList.remove('show');
+    var input = document.getElementById('searchInput');
+    if (input) { input.value = ''; input.blur(); }
+    var results = document.getElementById('searchResults');
+    if (results) results.innerHTML = '';
+  }
+});
+
+function toggleMobileNav() {
+  var navLinks = document.querySelector('.nav-links');
+  var mobilePanel = document.getElementById('mobileNavPanel');
+  if (!navLinks && !mobilePanel) return;
+  var wasOpen = (navLinks && navLinks.classList.contains('show')) || (mobilePanel && mobilePanel.classList.contains('show'));
+  closeAllPanels();
+  if (!wasOpen) {
+    if (navLinks) {
+      navLinks.classList.add('show');
+      document.querySelector('.hamburger').classList.add('active');
+    } else if (mobilePanel) {
+      mobilePanel.classList.add('show');
+      document.querySelector('.hamburger').classList.add('active');
+    }
+  }
+}
+
+function toggleDropdown(e, el) {
+  e.preventDefault();
+  e.stopPropagation();
+  var dd = el.parentElement;
+  if (dd.classList.contains('open')) {
+    dd.classList.remove('open');
+    if (window.innerWidth > 768) {
+      dd.classList.add('click-closed');
+      dd.addEventListener('mouseleave', function handler() {
+        dd.classList.remove('click-closed');
+        dd.removeEventListener('mouseleave', handler);
+      });
+    }
+  } else {
+    dd.classList.add('open');
+    dd.classList.remove('click-closed');
+  }
+}
+document.addEventListener('click', function(e) {
+  document.querySelectorAll('.nav-dropdown.open').forEach(function(d) {
+    if (!d.contains(e.target)) d.classList.remove('open');
+  });
+  if (window.innerWidth <= 768) {
+    if (!e.target.closest('.nav-links') && !e.target.closest('.hamburger') && !e.target.closest('.mobile-nav-panel')) {
+      var nl = document.querySelector('.nav-links');
+      var hb = document.querySelector('.hamburger');
+      var mp = document.getElementById('mobileNavPanel');
+      if (nl) nl.classList.remove('show');
+      if (mp) mp.classList.remove('show');
+      if (hb) hb.classList.remove('active');
+    }
+  }
+});
+document.querySelectorAll('.nav-links .dropdown-menu a:not(.disabled), .mobile-nav-panel a').forEach(function(link) {
+  link.addEventListener('click', function() {
+    if (window.innerWidth <= 768) {
+      var nl = document.querySelector('.nav-links');
+      var hb = document.querySelector('.hamburger');
+      var mp = document.getElementById('mobileNavPanel');
+      if (nl) nl.classList.remove('show');
+      if (mp) mp.classList.remove('show');
+      if (hb) hb.classList.remove('active');
+    }
+  });
+});
+
+(function() {
+  function checkOverflow() {
+    if (window.innerWidth <= 768) return;
+    var navbar = document.querySelector('.navbar');
+    var navLinks = document.querySelector('.nav-links');
+    var hamburger = document.querySelector('.hamburger');
+    if (!navbar || !navLinks || !hamburger) return;
+    var available = navbar.clientWidth - 200;
+    if (navLinks.scrollWidth > available) {
+      navbar.classList.add('nav-overflow');
+    } else {
+      navbar.classList.remove('nav-overflow');
+    }
+  }
+  window.addEventListener('resize', checkOverflow);
+  checkOverflow();
+})();
+</script>

@@ -1,0 +1,203 @@
+<%
+// blog 模式：报纸感首页
+const isBlog = theme.site_type === 'blog';
+
+if (isBlog) {
+  // 根据当前页 lang 决定渲染中文还是英文文章
+  const isEnPage = page.lang === 'en';
+  const langFilter = isEnPage ? 'en' : 'zh-CN';
+  const allPosts = site.posts
+    .filter(p => p.layout === 'post' && p.lang === langFilter)
+    .sort('-date');
+
+  // 取第一篇作头条
+  const headlineCount = theme.blog.home.headline_count || 1;
+  const headlines = allPosts.slice(0, headlineCount);
+  const restPosts = allPosts.slice(headlineCount);
+
+  // 辅助：截断 excerpt
+  const excerptLength = theme.blog.home.excerpt_length || 120;
+  const makeExcerpt = (post) => {
+    if (post.description) return post.description;
+    const text = (post.excerpt || post.content || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    return text.length > excerptLength ? text.slice(0, excerptLength) + '…' : text;
+  };
+} else {
+  // kb 模式：原知识库首页
+%>
+
+<div class="container">
+  <div class="index-hero">
+    <h1>此木暖通车间</h1>
+    <p>暖通空调（HVAC）领域的个人开源知识库与工程工具集 · 纯静态部署 · 即开即用</p>
+  </div>
+
+  <section class="card-section">
+    <h2 class="section-title">🔧 工程工具</h2>
+    <div class="cards">
+      <% site.pages.filter(p => p.type === 'tools' && p.path !== 'tools/index.html').forEach(tool => { %>
+        <a class="card" href="<%= url_for(tool.path) %>">
+          <h3><%= tool.title %></h3>
+          <% if (tool.description) { %><p><%= tool.description %></p><% } %>
+        </a>
+      <% }) %>
+      <a class="card" href="<%= url_for('/hvac/tools/hydraulic-calc.html') %>">
+        <h3>💧 不等温降法水力计算</h3>
+        <p>Darcy-Weisbach 摩擦公式与 Colebrook 方程迭代求解</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="card-section">
+    <h2 class="section-title">📚 知识库</h2>
+    <div class="kb-columns">
+      <% if (site.data['kb-articles'] && site.data['kb-articles'].knowledge_bases) {
+        site.data['kb-articles'].knowledge_bases.forEach(function(kb) { %>
+      <div class="kb-col">
+        <a class="kb-col-head" href="<%= url_for(kb.overview.path) %>"><%= kb.emoji %> <%= kb.overview.title %></a>
+        <% kb.sections.forEach(function(sec) { %>
+        <div class="kb-col-label"><%= sec.name %></div>
+        <div class="kb-col-links">
+          <% sec.articles.forEach(function(art) { %>
+          <a class="kb-col-link" href="<%= url_for(art.path) %>"><%= art.emoji %> <%= art.title %></a>
+          <% }) %>
+        </div>
+        <% }) %>
+      </div>
+      <% }) } %>
+      <% if (site.data['kb-articles'] && site.data['kb-articles'].upcoming) {
+        site.data['kb-articles'].upcoming.forEach(function(u) { %>
+      <div class="kb-col upcoming">
+        <div class="kb-col-head"><%= u.emoji %> 📦 即将上线</div>
+        <p style="font-size:14px;color:var(--text-secondary);padding:4px 0;"><%= u.description %></p>
+      </div>
+      <% }) } %>
+    </div>
+  </section>
+
+</div>
+
+<% } %>
+
+<%
+if (isBlog) {
+  // 重新计算（上面 % if/else 内的 const 不会逃逸出来）
+  const isEnPage2 = page.lang === 'en';
+  const langFilter2 = isEnPage2 ? 'en' : 'zh-CN';
+  const allPosts2 = site.posts
+    .filter(p => p.layout === 'post' && p.lang === langFilter2)
+    .sort('-date');
+  const headlineCount2 = theme.blog.home.headline_count || 1;
+  const headlines2 = allPosts2.slice(0, headlineCount2);
+  const restPosts2 = allPosts2.slice(headlineCount2);
+  const excerptLength2 = theme.blog.home.excerpt_length || 120;
+  const makeExcerpt2 = (post) => {
+    if (post.description) return post.description;
+    const text = (post.excerpt || post.content || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    return text.length > excerptLength2 ? text.slice(0, excerptLength2) + '…' : text;
+  };
+%>
+
+<div class="newspaper-wrap">
+  <header class="newspaper-masthead">
+    <div class="newspaper-masthead-deco"></div>
+    <div class="newspaper-masthead-mobile">
+      <h1 class="newspaper-title"><%= isEnPage2 ? (config.title_en || config.title) : config.title %></h1>
+      <p class="newspaper-subtitle"><%= isEnPage2 ? (config.subtitle_en || config.subtitle) : config.subtitle %></p>
+    </div>
+  </header>
+
+  <div class="newspaper-layout">
+    <main class="newspaper-main">
+      <% if (headlines2.length > 0) { %>
+        <% headlines2.forEach(function(post) { %>
+        <%
+          // 三段兜底：显式 cover → 正文首图 → 占位色块
+          let headlineCover = post.cover;
+          if (!headlineCover) {
+            const firstImg = (post.content || '').match(/\/assets\/images\/[^"')]+\.(webp|jpg|jpeg|png)/i);
+            if (firstImg) headlineCover = firstImg[0];
+          }
+        %>
+        <article class="newspaper-headline">
+          <a class="newspaper-headline-cover<%= headlineCover ? '' : ' cover-placeholder' %>" href="<%= url_for(post.path) %>">
+            <% if (headlineCover) { %>
+              <img src="<%= headlineCover %>" alt="<%= post.title %>" loading="lazy">
+            <% } else { %>
+              <span class="cover-placeholder-text"><%= (post.category || '文章') %></span>
+            <% } %>
+          </a>
+          <div class="newspaper-headline-body">
+            <% if (post.category) { %><span class="newspaper-cat"><%= post.category %></span><% } %>
+            <h2 class="newspaper-headline-title">
+              <a href="<%= url_for(post.path) %>"><%= post.title %></a>
+            </h2>
+            <p class="newspaper-headline-excerpt"><%= makeExcerpt2(post) %></p>
+            <div class="newspaper-headline-meta">
+              <% if (theme.blog.home.show_dates) { %><time><%= date(post.date, 'YYYY-MM-DD') %></time><% } %>
+              <% if (theme.blog.home.show_tags && post.tags && post.tags.length) { %>
+                <span class="newspaper-tags">
+                  <% post.tags.forEach(function(tag, i) { %>
+                    <a href="<%= url_for(config.tag_dir + '/' + tag.name) %>">#<%= tag.name %></a>
+                  <% }) %>
+                </span>
+              <% } %>
+            </div>
+          </div>
+        </article>
+        <% }) %>
+      <% } %>
+
+      <% if (restPosts2.length > 0) { %>
+      <section class="newspaper-list">
+        <% restPosts2.forEach(function(post) { %>
+        <%
+          // 列表项缩略图三段兜底：显式 cover → 正文首图 → 占位
+          let itemCover = post.cover;
+          if (!itemCover) {
+            const firstImg = (post.content || '').match(/\/assets\/images\/[^"')]+\.(webp|jpg|jpeg|png)/i);
+            if (firstImg) itemCover = firstImg[0];
+          }
+        %>
+        <article class="newspaper-item">
+          <a class="newspaper-item-cover<%= itemCover ? '' : ' placeholder' %>" href="<%= url_for(post.path) %>">
+            <% if (itemCover) { %>
+              <img src="<%= itemCover %>" alt="<%= post.title %>" loading="lazy">
+            <% } else { %>
+              <span><%= (post.category || '文章').slice(0, 2) %></span>
+            <% } %>
+          </a>
+          <div class="newspaper-item-body">
+            <h3 class="newspaper-item-title">
+              <a href="<%= url_for(post.path) %>"><%= post.title %></a>
+            </h3>
+            <p class="newspaper-item-excerpt"><%= makeExcerpt2(post) %></p>
+            <div class="newspaper-item-meta">
+              <% if (theme.blog.home.show_dates) { %><time><%= date(post.date, 'YYYY-MM-DD') %></time><% } %>
+              <% if (post.category) { %><span class="newspaper-cat-mini">📂 <%= post.category %></span><% } %>
+              <% if (theme.blog.home.show_tags && post.tags && post.tags.length) { %>
+                <span class="newspaper-tags-mini">
+                  <% post.tags.forEach(function(tag) { %>
+                    <a href="<%= url_for(config.tag_dir + '/' + tag.name) %>">#<%= tag.name %></a>
+                  <% }) %>
+                </span>
+              <% } %>
+            </div>
+          </div>
+        </article>
+        <% }) %>
+      </section>
+      <% } else if (allPosts2.length === 0) { %>
+        <div class="newspaper-empty">
+          <p>还没有文章，去 <code>source/_posts/</code> 创建第一篇吧。</p>
+        </div>
+      <% } %>
+    </main>
+
+    <aside class="newspaper-sidebar">
+      <%- partial('_partial/blog-sidebar') %>
+    </aside>
+  </div>
+</div>
+
+<% } %>

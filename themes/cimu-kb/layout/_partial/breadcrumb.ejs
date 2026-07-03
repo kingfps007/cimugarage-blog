@@ -1,0 +1,43 @@
+<div class="breadcrumb">
+  <a href="<%= url_for('/') %>">首页</a>
+  <span class="sep">&gt;</span>
+  <%
+    var kbData = site.data['kb-articles'];
+    var currentKb = null;
+
+    if (kbData && kbData.knowledge_bases) {
+      kbData.knowledge_bases.forEach(function(kb) {
+        if (currentKb) return;
+        var ovBase = kb.overview.path.replace(/\.html$/, '').replace(/\/$/, '');
+        // 精确匹配 overview：检查 page.path 是否以 ovBase/ 或 ovBase.html 结尾
+        if (page.path === ovBase + '/index.html' || page.path === ovBase + '.html') {
+          currentKb = kb; return;
+        }
+        kb.sections.forEach(function(sec) {
+          if (currentKb) return;
+          sec.articles.forEach(function(art) {
+            if (currentKb) return;
+            var artBase = art.path.replace(/\.html$/, '').replace(/\/$/, '').replace(/^\//, '');
+            var pageBase = page.path.replace(/\.html$/, '').replace(/\/$/, '');
+            if (pageBase === artBase || pageBase === artBase + '/index') {
+              currentKb = kb;
+            }
+          });
+        });
+      });
+      if (!currentKb) currentKb = kbData.knowledge_bases[0];
+    }
+    var isOverview = false;
+    if (currentKb) {
+      var ovP = currentKb.overview.path.replace(/\.html$/, '').replace(/\/$/, '');
+      isOverview = (page.path === ovP + '/index.html' || page.path === ovP + '.html');
+    }
+  %>
+  <% if (currentKb) { %>
+  <a href="<%= url_for(currentKb.overview.path) %>"><%= currentKb.emoji %> <%= currentKb.name %></a>
+  <% if (!isOverview) { %>
+    <span class="sep">&gt;</span>
+    <span class="current"><%= page.title %></span>
+  <% } %>
+  <% } %>
+</div>

@@ -1,0 +1,86 @@
+# 主题配置文件示例
+# cimugarage.cn 真实配置（生产环境）
+
+# ====== 基础 ======
+# 站点配置由 Hexo 主 _config.yml 提供（title / url / description / language / timezone）
+
+# ====== 菜单（多语言） ======
+# 与 Hexo 主 _config.yml 的 language_dir 配合使用
+menu:
+  zh-CN:
+    home: /
+    archives: /archives/
+    categories: /categories/
+    tags: /tags/
+    about: /about/
+  en:
+    home: /en/
+    archives: /en/archives/
+    categories: /en/categories/
+    tags: /en/tags/
+    about: /en/about/
+
+# ====== 暗色模式（user_profile 偏好：不跟随系统） ======
+dark_mode:
+  enabled: true
+  default: light
+  persistence: localStorage
+
+# ====== 搜索 ======
+search:
+  enabled: true
+  endpoint: /search/
+  fuse:
+    threshold: 0.3
+
+# ====== 评论（自建 ESA 函数） ======
+comment:
+  enabled: true
+  endpoint: /api/comments
+  submit_endpoint: /api/comment
+  admin_endpoint: /admin/comments
+  per_page: 20
+  max_length: 2000
+
+# ====== 浏览数（自建 ESA 函数） ======
+view_counter:
+  enabled: true
+  endpoint: /api/view
+  count_endpoint: /api/view/count
+  hit_threshold: 1
+  show_after_seconds: 0
+
+# ====== 浏览排行榜 ======
+top_posts:
+  enabled: true
+  endpoint: /api/top-posts
+  limit: 20
+  cache_seconds: 300
+
+# ====== 人生倒计时（仅 about 页） ======
+life_progress:
+  enabled: true
+  show: true
+  birth_date: '1990-01-01'  # 默认不公开
+
+# ====== 封面图三段兜底 ======
+cover_placeholder: /assets/images/common/cover-placeholder.webp
+
+# ====== 文章页 ======
+post:
+  last_updated_warning: 90  # 90 天
+  show_view_count: true
+  show_updated_date: true
+
+# ====== 无障碍（A11Y WCAG 2.1 AA） ======
+a11y:
+  skip_link: true
+  focus_visible: true
+  aria: true
+  prefers_reduced_motion: true
+
+# ====== 资源本地化（无公共 CDN） ======
+lib:
+  katex: /lib/katex/
+  fuse: /lib/fuse.js/
+  # ... 其他库全部本地化

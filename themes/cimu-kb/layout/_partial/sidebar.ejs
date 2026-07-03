@@ -1,0 +1,53 @@
+<% if (site.data['kb-articles'] && site.data['kb-articles'].knowledge_bases) {
+  var kbPaths = {};
+  var kbNames = {};
+  var kbArticles = {};
+  site.data['kb-articles'].knowledge_bases.forEach(function(kb) {
+    var paths = [kb.overview.path];
+    var flat = [];
+    kb.sections.forEach(function(sec) { sec.articles.forEach(function(art) { paths.push(art.path); flat.push(art.path); }); });
+    kbPaths[kb.id] = paths;
+    kbNames[kb.id] = kb.emoji + ' ' + kb.name;
+    kbArticles[kb.id] = flat;
+  });
+} %>
+<script id="kbSwitcherData" type="application/json"><%- JSON.stringify({ paths: kbPaths, names: kbNames, articles: kbArticles }) %></script>
+
+<div class="kb-switcher">
+  <span class="kb-switcher-label" id="currentKbLabel">🏗️ 建筑自控</span>
+  <div class="kb-switcher-wrap">
+    <button class="kb-switcher-btn" onclick="toggleKbSwitcher(event)">切换 ▾</button>
+    <div class="kb-switcher-dropdown" id="kbSwitcherDropdown">
+      <% if (site.data['kb-articles'] && site.data['kb-articles'].knowledge_bases) {
+        site.data['kb-articles'].knowledge_bases.forEach(function(kb) { %>
+      <a href="<%= url_for(kb.overview.path) %>" class="kb-option" data-kb="<%= kb.id %>"><%= kb.emoji %> <%= kb.name %></a>
+      <% }) } %>
+      <% if (site.data['kb-articles'] && site.data['kb-articles'].upcoming) {
+        site.data['kb-articles'].upcoming.forEach(function(u) { %>
+      <a href="#" class="disabled" style="opacity:0.5"><%= u.emoji %> <%= u.name %>（即将上线）</a>
+      <% }) } %>
+    </div>
+  </div>
+</div>
+
+<% if (site.data['kb-articles'] && site.data['kb-articles'].knowledge_bases) {
+  site.data['kb-articles'].knowledge_bases.forEach(function(kb, kbIdx) { %>
+<div class="sidebar-nav" id="nav-<%= kb.id %>"<% if (kbIdx > 0) { %> style="display:none;"<% } %>>
+  <ul class="tree">
+    <li>
+      <a href="<%= url_for(kb.overview.path) %>"><%= kb.overview.emoji %> <%= kb.overview.title %></a>
+    </li>
+    <% kb.sections.forEach(function(sec) { %>
+    <li class="tree-section">
+      <span class="tree-toggle<% if (sec.collapsed) { %> collapsed<% } %>" onclick="toggleTreeNode(this)">▼</span>
+      <span class="tree-label"><%= sec.name %></span>
+      <ul class="tree-children"<% if (sec.collapsed) { %> style="display:none;"<% } %>>
+        <% sec.articles.forEach(function(art) { %>
+        <li><a href="<%= url_for(art.path) %>"><%= art.emoji %> <%= art.title %></a></li>
+        <% }) %>
+      </ul>
+    </li>
+    <% }) %>
+  </ul>
+</div>
+<% }) } %>

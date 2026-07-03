@@ -1,0 +1,28 @@
+/* 组件模板样式 - 复制后按需修改 */
+
+.component-placeholder {
+  padding: 1em;
+  margin: 1em 0;
+  border: 1px dashed var(--border, #ccc);
+  border-radius: 4px;
+  background: var(--bg-alt, #f8f8f8);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.9em;
+}
+
+.component-placeholder strong {
+  color: var(--primary, #B05A32);
+  font-size: 1.1em;
+}
+
+.component-placeholder pre {
+  margin: 0.5em 0 0;
+  padding: 0.5em;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 2px;
+  overflow-x: auto;
+}
+
+[data-theme="dark"] .component-placeholder {
+  background: rgba(255, 255, 255, 0.05);
+}

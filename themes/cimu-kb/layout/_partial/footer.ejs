@@ -1,0 +1,9 @@
+<footer class="footer">
+  <p>© <%= config.since %><%= '–' + new Date().getFullYear() %> <%= config.author %></p>
+  <% if (config.icp) { %>
+  <p class="footer-icp"><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener"><%= config.icp %></a></p>
+  <% } %>
+  <% if (config.police) { %>
+  <p class="footer-icp"><a href="https://beian.mps.gov.cn/" target="_blank" rel="noopener"><%= config.police %></a></p>
+  <% } %>
+</footer>
