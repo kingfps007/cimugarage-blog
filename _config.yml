@@ -1,0 +1,138 @@
+# ============================================================
+# cimugarage.cn 博客站 · Hexo 主配置
+# 站点：https://cimugarage.cn
+# 文档：BLOG_MIGRATION_DESIGN.md v0.5.1
+# 规则：.trae/rules/blog_workflow.md v0.5
+# ============================================================
+
+# ====== 基础 ======
+title: 此木的车间
+subtitle: 个人博客 · 专题文章 · 技术折腾 · 生活记录
+description: 此木的车间——一个中文 + 英文双语的个人博客，分享技术学习与生活记录。
+keywords: 此木的车间, cimugarage, 博客, 个人网站
+author: 此木的车间
+email: 2479010668@qq.com
+url: https://cimugarage.cn
+root: /
+# hexo 7 没有真正的原生多语言框架（只有 UI 字符串翻译 __()）
+# 中英两版用 front matter 的 path 字段强制路由：
+#   - 中文 source/about/index.md          → 渲染到 /about/
+#   - 英文 source/about/en.md (path: en/about) → 渲染到 /en/about/
+language: zh-CN
+timezone: Asia/Shanghai
+
+# ====== 备案号（D5 合规底线，P0 第一步必填） ======
+icp: '晋ICP备2026000871号-1'
+police: '晋公网安备14010902001829号'
+
+# ====== 目录 ======
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+skip_render:
+
+# ====== 文章（Hexo 7 原生 i18n） ======
+new_post_name: :title.md
+default_layout: post
+titlecase: false
+external_link:
+  enable: true
+  field: site
+  exclude: ''
+filename_case: 0
+render_drafts: false
+post_asset_folder: true
+marked:
+  prependRoot: true
+  postAsset: true
+relative_link: false
+future: true
+highlight:
+  enable: true
+  line_number: true
+  auto_detect: true
+  tab_replace: ''
+  wrap: true
+  hljs: false
+prismjs:
+  enable: false
+
+# ====== 首页 ======
+# fluid 自带 index 生成器，需要 index_generator 配置（不是 hexo-generator-index 插件）
+# fluid 已接管首页生成；_posts/index.md（permalink: /）作为首页静态占位
+index_generator:
+  path: ''
+  per_page: 10
+  order_by: -date
+
+# ====== 分类 / 标签页 ======
+category_generator:
+  per_page: 20
+tag_generator:
+  per_page: 20
+
+# ====== 归档 / 关于 ======
+archive_generator:
+  per_page: 0
+  yearly: true
+  monthly: true
+
+# ====== 永久链接 ======
+# 文章：/<slug>/（不带 lang 前缀，由 front matter path 强制双语）
+permalink: :title/
+permalink_defaults:
+  pretty_urls:
+    trailing_index: true
+
+# ====== 主题（cimu-kb 通用主题，blog 模式：报纸感首页 + 知识库风格文章页） ======
+theme: cimu-kb
+
+# ====== 部署（ESA Pages） ======
+deploy:
+  type: ''  # 静态站，无需 hexo-deployer
+
+# ====== 元数据 ======
+since: 2018
+favicon: /favicon.svg
+apple_touch_icon: /assets/images/common/apple-touch-icon.png
+
+# ====== JSON-LD 站点信息（设计稿 §12.6.6） ======
+jsonld:
+  site_name: 此木的车间
+  site_url: https://cimugarage.cn
+  author:
+    name: 此木的车间
+    url: https://cimugarage.cn/about/
+  logo: /assets/images/common/logo.svg
+  license: https://creativecommons.org/licenses/by/4.0/
+
+# ====== 性能 / SEO ======
+sitemap:
+  path: sitemap.xml
+  rel: false
+  tags: true
+  categories: true
+
+feed:
+  type: rss2
+  path: rss2.xml
+  limit: 20
+  content: false
+  content_limit: 140
+  content_limit_delim: ' [...]'
+
+# ====== 必需插件（hexo 7 缺一不可） ======
+plugins:
+  - hexo-renderer-marked  # .md → HTML
+  - hexo-renderer-ejs     # .ejs 主题模板
+  - hexo-renderer-stylus  # .styl 主题样式
+  # 生成器
+  - hexo-generator-archive
+  - hexo-generator-category
+  - hexo-generator-tag
+  - hexo-generator-feed
+  - hexo-generator-sitemap
+  # - hexo-server  # 本地预览用，不入依赖
