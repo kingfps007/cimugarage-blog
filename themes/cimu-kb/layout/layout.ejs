@@ -122,7 +122,7 @@
         </div>
       </main>
       <% if (theme.blog.post.show_toc) { %>
-      <aside class="kb-toc" id="kbToc">
+      <aside class="blog-toc" id="blogToc">
         <h4>目录</h4>
         <nav id="tocNav"></nav>
       </aside>
@@ -294,6 +294,14 @@
       if (prog < 1) requestAnimationFrame(step);
     }
     requestAnimationFrame(step);
+  }
+
+  // 目录展开/收起（kb 模式 + blog 模式共用）
+  function toggleToc() {
+    var tocKb = document.getElementById('kbToc');
+    var tocBlog = document.getElementById('blogToc');
+    if (tocKb) tocKb.classList.toggle('open');
+    if (tocBlog) tocBlog.classList.toggle('open');
   }
 
   document.querySelectorAll('.kb-main article img, .blog-main article img, .container article img').forEach(function(img) {

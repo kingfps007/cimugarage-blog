@@ -31,9 +31,11 @@
       var target = document.getElementById(h.id);
       if (!target) return;
       smoothScrollTo(target.offsetTop - 80, 600);
-      // 移动端关闭目录面板
-      var toc = document.getElementById('kbToc');
-      if (toc) toc.classList.remove('open');
+      // 移动端关闭目录面板（kb 模式 + blog 模式）
+      var tocKb = document.getElementById('kbToc');
+      if (tocKb) tocKb.classList.remove('open');
+      var tocBlog = document.getElementById('blogToc');
+      if (tocBlog) tocBlog.classList.remove('open');
     });
 
     tocNav.appendChild(a);

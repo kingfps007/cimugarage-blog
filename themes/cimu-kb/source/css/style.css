@@ -570,6 +570,8 @@ body.about .container article h3 + ol li { font-size: 15px; }
 @media (max-width: 1024px) {
   .kb-toc { display: none; }
   .kb-toc.open { display: block; position: fixed; top: calc(var(--nav-height) + var(--crumb-height)); right: 0; width: 220px; height: calc(100vh - var(--nav-height) - var(--crumb-height)); z-index: 901; box-shadow: -2px 0 12px var(--shadow); }
+  .blog-toc { display: none; }
+  .blog-toc.open { display: block; position: fixed; top: var(--nav-height); right: 0; width: 240px; height: calc(100vh - var(--nav-height)); z-index: 901; background: var(--paper-sidebar); border-left: 3px solid var(--ink-headline); box-shadow: -2px 0 12px var(--shadow); }
   .kb-sidebar { width: 200px; min-width: 200px; }
   .kb-main-content { max-width: none; padding: 24px; }
   .toc-toggle { display: flex; }
