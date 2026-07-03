@@ -95,7 +95,7 @@ deploy:
   type: ''  # 静态站，无需 hexo-deployer
 
 # ====== 元数据 ======
-since: 2018
+since: 2026
 favicon: /favicon.svg
 apple_touch_icon: /assets/images/common/apple-touch-icon.png
 

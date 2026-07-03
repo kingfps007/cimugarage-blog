@@ -13,7 +13,7 @@ comments: false
 
 A bilingual (Chinese + English) personal blog. Sharing tech learning, life notes, and focused studies.
 
-- **Founded**: 2018
+- **Founded**: 2026
 - **Languages**: Chinese (default) + English (AI translation + human review)
 - **License**: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 - **Privacy**: [Privacy Policy](/en/about/privacy/)

@@ -13,7 +13,7 @@ comments: false
 
 一个中文 + 英文双语的个人博客。分享技术学习、生活记录、专题研究。
 
-- **建站时间**：2018 年
+- **建站时间**：2026 年
 - **语言**：中文（默认）+ 英文（AI 翻译 + 人工校核）
 - **许可**：CC BY 4.0（[查看许可协议](https://creativecommons.org/licenses/by/4.0/deed.zh)）
 - **隐私**：[隐私政策](/about/privacy/)
