@@ -1,6 +1,6 @@
 # ============================================================
 # ESA Pages 静态重定向
-# 文件位置：cimugarage-blog/public/_redirects
+# 文件位置：cimugarage-blog/_redirects → 构建时复制到 public/_redirects
 # 部署后由 ESA Pages 自动识别
 # ============================================================
 
@@ -9,19 +9,30 @@
 # 新站格式：/<slug>/（中文）/en/<slug>/（英文）
 # 覆盖所有迁移文章的 Halo 旧链接，避免外部分享的链接失效
 
+# 旧 Halo slug → 新 permalink（slug 已简化）
 /archives/security-of-blog/                                                /security-of-blog/                                                                 301
 /archives/blog-security/                                                   /security-of-blog/                                                                 301
-/archives/linuxru-men/                                                     /linuxru-men/                                                                      301
-/archives/linux-intro/                                                     /linuxru-men/                                                                      301
+/archives/linuxru-men/                                                     /linux-intro/                                                                      301
+/archives/linux-intro/                                                     /linux-intro/                                                                      301
 /archives/wai-she-equipments/                                              /wai-she-equipments/                                                              301
+/archives/peripherals/                                                     /wai-she-equipments/                                                              301
 /archives/chai-chu-raid-he-lvm/                                            /chai-chu-raid-he-lvm/                                                            301
-/archives/fei-niu-zhuan-linuxnas/                                          /fei-niu-zhuan-linuxnas/                                                          301
-/archives/ji-yu-chao-sheng-bo-wu-hua-yu-duo-chuan-gan-qi-dan-pian-ji-zhi-neng-kong-zhi-de-zheng-fa-leng-que-jing-hua-jia-shi-xi-tong/  /ji-yu-chao-sheng-bo-wu-hua-yu-duo-chuan-gan-qi-dan-pian-ji-zhi-neng-kong-zhi-de-zheng-fa-leng-que-jing-hua-jia-shi-xi-tong/  301
+/archives/fei-niu-zhuan-linuxnas/                                          /fnos-to-linuxnas/                                                                301
+/archives/fnos-to-linuxnas/                                                /fnos-to-linuxnas/                                                                301
+/archives/ji-yu-chao-sheng-bo-wu-hua-yu-duo-chuan-gan-qi-dan-pian-ji-zhi-neng-kong-zhi-de-zheng-fa-leng-que-jing-hua-jia-shi-xi-tong/  /ultrasonic-humidifier/  301
+/archives/ultrasonic-humidifier/                                           /ultrasonic-humidifier/                                                           301
 /archives/about/                                                           /about/                                                                            301
 /archives                                                                  /archives/                                                                         301
 /archives/                                                                 /archives/                                                                         301
 
-# ----- Moments 瞬间归档页（Halo 旧 Moments 路径统一到新站） -----
+# ----- 新站内部旧 slug 简化后的重定向（保证旧内部链接不失效） -----
+/linuxru-men/                                                              /linux-intro/                                                                     301
+/en/linuxru-men/                                                            /en/linux-intro/                                                                  301
+/fei-niu-zhuan-linuxnas/                                                   /fnos-to-linuxnas/                                                                301
+/en/fei-niu-zhuan-linuxnas/                                                /en/fnos-to-linuxnas/                                                             301
+/ji-yu-chao-sheng-bo-wu-hua-yu-duo-chuan-gan-qi-dan-pian-ji-zhi-neng-kong-zhi-de-zheng-fa-leng-que-jing-hua-jia-shi-xi-tong/  /ultrasonic-humidifier/  301
+
+# ----- Moments 瞬间归档页 -----
 /moments                         /moments/               301
 
 # ----- 通用兜底 -----

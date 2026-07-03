@@ -3,7 +3,7 @@ title: linux 入门问题排查记录
 date: 2026-03-07 15:37:00
 updated: 2026-03-07 17:07:00
 lang: zh-CN
-permalink: /linuxru-men/
+permalink: /linux-intro/
 layout: post
 category: tech-learned
 tags: [linux, ubuntu, edge, gpu, hardware-accel, wayland]

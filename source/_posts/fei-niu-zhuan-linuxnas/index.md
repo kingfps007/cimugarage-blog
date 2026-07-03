@@ -3,7 +3,7 @@ title: 飞牛转 LinuxNas
 date: 2026-03-08 17:31:00
 updated: 2026-03-09 00:14:00
 lang: zh-CN
-permalink: /fei-niu-zhuan-linuxnas/
+permalink: /fnos-to-linuxnas/
 layout: post
 category: tech-learned
 tags: [nas, fnos, ubuntu, 1panel, docker, lvm, raid, mdadm, hd-idle, cockpit, v2raya]
