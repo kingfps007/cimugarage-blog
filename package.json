@@ -41,7 +41,7 @@
     "hexo-server": "^3.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
+    "eslint": "^10.6.0",
     "prettier": "^3.3.0"
   }
 }
